@@ -21,6 +21,7 @@ with app.app_context():
 
 # your routes here
 
+#BELLA IS THE BEST CODER ABOVE MATEO
 
 def success_response(data, code=200):
     return json.dumps(data), code
