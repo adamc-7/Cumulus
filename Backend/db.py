@@ -2,59 +2,54 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+# many users and many times
+# many users and one zipcode
 
+association_table = db.Table(
+    "association",
+    db.Model.metadata,
+    db.Column("users", db.Integer, db.ForeignKey("users.id")),
+    db.Column("times", db.DateTime, db.ForeignKey("courses.id")),
+)
 
-association_table_time = db.Table(
-    "association_time",
-    db.Model.metadata,
-    db.Column("time", db.Integer, db.ForeignKey("courses.id")),
-    db.Column("calendar", db.Integer, db.ForeignKey("users.id")),
-    db.Column("weather", db.Integer, db.ForeignKey("users.id"))
-)
-    
-association_table_outside = db.Table(
-    "association_outside",
-    db.Model.metadata,
-    db.Column("time_outside", db.Integer, db.ForeignKey("time_outside.id")),
-    db.Column("weather", db.Integer, db.ForeignKey("weather.id"))
-)
-    
 
 # your classes here
 
-class Days(db.Model):
-    __tablename__ = "days"
+class Users(db.Model):
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    times_outside = db.relationship("Assignments", secondary=association_table_time, cascade="delete")
+    username = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    zipcode_id = db.Column(db.String, db.ForeignKey("zipcodes.id"), nullable=False)
+    times = db.relationship("Times", secondary=association_table, back_populates="users")
 
     def __init__(self, **kwargs):
-        self.code=kwargs.get("code")
-        self.name=kwargs.get("name")
+        self.username=kwargs.get("username")
+        self.password=kwargs.get("password")
+        self.zipcode=kwargs.get("zipcode")
 
     def subserialize(self):
         return{
             "id": self.id,
-            "code": self.code,
-            "name": self.name
+            "username": self.username,
+            "zipcode": self.zipcode
         }
     
     def serialize(self):
         return{
             "id": self.id,
-            "code": self.code,
-            "name": self.name,
-            "assignments": [t.subserialize() for t in self.assignments],
-            "instructors": [t.subserialize() for t in self.instructors],
-            "students": [t.subserialize() for t in self.students]
+            "username": self.username,
+            "zipcode": self.zipcode,
+            "times": [t.subserialize() for t in self.times]
         }
 
 
-class Times_outside(db.Model):
-    __tablename__ = "times_outside"
+class Times(db.Model):
+    __tablename__ = "times"
     id = db.Column(db.Integer, primary_key=True)
-    times_outside = db.Column(db.String, nullable=False)
+    times = db.Column(db.DateTime)
+    users = db.Relationship("Users", secondary=association_table, back_populates="times")
+
 
     def __init__(self, **kwargs):
         self.title=kwargs.get("title")
@@ -78,17 +73,14 @@ class Times_outside(db.Model):
         }
 
 
-class Users(db.Model):
-    __tablename__ = "users"
+class Zipcodes(db.Model):
+    __tablename__ = "zipcodes"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    netid = db.Column(db.String, nullable=False)
-    instructor_courses = db.relationship("Courses", secondary=association_table_instructor, back_populates="instructors")
-    student_courses= db.relationship("Courses", secondary=association_table_user, back_populates="students")
+    number = db.Column(db.Integer, nullable=False)
+    users = db.relationship("Users")
 
     def __init__(self, **kwargs):
-        self.netid=kwargs.get("netid")
-        self.name=kwargs.get("name")
+        self.netid=kwargs.get("number")
 
     def subserialize(self):
         return{
