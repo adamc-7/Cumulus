@@ -20,7 +20,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
-    zipcode_id = db.Column(db.String, db.ForeignKey("zipcodes.id"), nullable=False)
+    zipcode_id = db.Column(db.Integer, db.ForeignKey("zipcodes.id"), nullable=False)
     times = db.relationship("Times", secondary=association_table, back_populates="users")
 
     def __init__(self, **kwargs):
@@ -47,14 +47,16 @@ class Users(db.Model):
 class Times(db.Model):
     __tablename__ = "times"
     id = db.Column(db.Integer, primary_key=True)
-    times = db.Column(db.DateTime)
+    hour = db.Column(db.Integer, nullable = False)
+    minute = db.Column(db.Integer, nullable = False)
+    time = db.Column(db.DateTime) #or change to db.Column(db.Float)
     users = db.Relationship("Users", secondary=association_table, back_populates="times")
 
 
     def __init__(self, **kwargs):
-        self.title=kwargs.get("title")
-        self.due_date=kwargs.get("due_date")
-        self.course_id=kwargs.get("courses")
+        self.id = id
+        self.hour=kwargs.get("hour")
+        self.minute=kwargs.get("minute")
 
     def subserialize(self):
         return{
@@ -64,19 +66,20 @@ class Times(db.Model):
         }
     
     def serialize(self):
-        course = Courses.query.filter_by(id=self.course_id).first()
+        #course = Courses.query.filter_by(id=course_id).first()
         return{
             "id": self.id,
-            "title": self.title,
-            "due_date": self.due_date,
-            "course": [course.subserialize()]
+            "hour": self.hour,
+            "minute": self.minute,
+            #"course": [course.subserialize()]
         }
 
 
 class Zipcodes(db.Model):
     __tablename__ = "zipcodes"
     id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.Integer, nullable=False)
+    number = db.Column(db.String, nullable=False)
+    country_code = db.Column(db.String, nullable=False)
     users = db.relationship("Users")
 
     def __init__(self, **kwargs):
