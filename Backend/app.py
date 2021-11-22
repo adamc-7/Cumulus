@@ -1,13 +1,14 @@
 import json
 from operator import ne
 from db import db
-from db import Courses
-from db import Assignments
 from db import Users
+from db import Times
+from db import Zipcodes
 from flask import Flask
 from flask import request
 import requests
 import math
+
 
 app = Flask(__name__)
 db_filename = "final.db"
@@ -25,7 +26,7 @@ api_key = "6045a3db7be80feeff53eb7f6c53586d"
 
 # your routes here
 
-#BELLA IS THE BEST CODER ABOVE MATEO
+#MATEO IS THE BEST CODER ABOVE BELLA
 
 def success_response(data, code=200):
     return json.dumps(data), code
@@ -33,6 +34,16 @@ def success_response(data, code=200):
 
 def failure_response(message, code=404):
     return json.dumps({"error": message}), code
+
+def extract_token(request):
+    auth_header = request.headers.get("Authorization")
+    if auth_header is None:
+        return None
+    bearer_token = auth_header.replace("Bearer ", "").strip
+    if bearer_token is None or not bearer_token:
+        return  None
+    return bearer_token
+
 
 
 
@@ -56,9 +67,10 @@ def get_daily_weather(api_key, user_id):
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
-    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={currently, minutely, hourly, alerts}&appid={api_key}"
-    temp = math.floor((temp * 1.8) - 459.67)
+    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=currently,minutely,hourly,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
+    temp = response1['main']['temp']
+    temp = math.floor((temp * 1.8) - 459.67)
 
     final_response = {}
     temp_morn = response1['daily']['temp']['morn']
@@ -102,9 +114,6 @@ def get_daily_weather(api_key, user_id):
     return success_response(final_response)
 
 
-
-
-
 @app.route("/api/users/<int:user_id>/weather/hourly")
 def get_hourly_weather(api_key, user_id):
     user = Users.query.filter_by(id=user_id).first()
@@ -117,7 +126,7 @@ def get_hourly_weather(api_key, user_id):
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
-    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={currently, minutely, daily, alerts}&appid={api_key}"
+    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=currently,minutely,daily,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
     temp = response1['main']['temp']
     temp = math.floor((temp * 1.8) - 459.67) 
@@ -154,110 +163,136 @@ def get_hourly_weather(api_key, user_id):
     return success_response(final_response) 
 
 
-    
+@app.route("/api/users/<int:user_id>/weather/", methods=["POST"])
 
 
-
-
-@app.route("/api/courses/")
-def get_courses():
+@app.route("/api/users/")
+def get_users():
     return success_response(
-        {"courses": [t.serialize() for t in Courses.query.all()]}
+        {"users": [t.serialize() for t in Users.query.all()]}
     )
 
-@app.route("/api/courses/", methods=["POST"])
-def create_course():
-    body = json.loads(request.data)
-    if not body.get("code"):
-        return failure_response("Course is missing a code", 400)
-    if not body.get("name"):
-        return failure_response("Course is missing a name", 400)
-    new_course = Courses(code=body.get("code"), name=body.get("name"))
-    db.session.add(new_course)
-    db.session.commit()
-    return success_response(new_course.serialize(), 201)
 
-@app.route("/api/courses/<int:course_id>/")
-def get_course(course_id):
-    course = Courses.query.filter_by(id=course_id).first()
-    if course is None:
-        return failure_response("Course does not exist")
-    return success_response(course.serialize())    
-    
-@app.route("/api/courses/<int:course_id>/", methods=["DELETE"])
-def delete_course(course_id):
-    course = Courses.query.filter_by(id=course_id).first()
-    if course is None:
-        return failure_response("Course does not exist")
-    db.session.delete(course)
-    db.session.commit()
-    return success_response(course.serialize())
-
-#created new user
+#post contains username,password,zipcode
 @app.route("/api/users/", methods=["POST"])
 def create_user():
     body = json.loads(request.data)
-    if not body.get("username"):
-        return failure_response("User is missing a username", 400)
-    if not body.get("password"):
-        return failure_response("User is missing a password", 400)
-    if not body.get("zipcode"):
-        return failure_response("User is missing a zipcode", 400)
-    if not body.get("times"):
-        times = []
-    else:
-        times = body.get("times")
-    new_user = Users(username=body.get("username"),password=body.get("password"), zipcode=body.get("zipcode"), times=times)
+    username=body.get("username")
+    password=body.get("password")
+    zipcode=body.get("zipcode")
+    times = body.get("times", [])
+    if not username:
+        return failure_response("Username is required", 400)
+    if not password:
+        return failure_response("Password is required", 400)
+    if not zipcode:
+        return failure_response("Zipcode is required", 400)
+    if Zipcodes.query.filter(Zipcodes.number==zipcode).first is None:
+        new_zipcode=Zipcodes(number=zipcode)
+        db.session.add(new_zipcode)
+    if Users.query.filter(Users.username==username).first() is not None:
+        return failure_response("user already exists")
+    
+    new_user = Users(username=username, password=password, zipcode=zipcode, times=times)
     db.session.add(new_user)
     db.session.commit()
-    return success_response(new_user.serialize(), 201)
 
-#completed delete method
-@app.route("api/users/<int:user_id>/", methods = ['DELETE'])
-def delete_user(user_id);
-    user = Courses.query.filter_by(id=user_id).first()
+    return success_response(
+        {
+            "session_token": new_user.session_token,
+            "session_expiration": str(new_user.session_expiration),
+            "update_token": new_user.update_token
+        }, 201)
+    #return success_response(new_user.serialize(), 201)
+
+
+@app.route("/api/login/", methods=["POST"])
+def login():
+    body = json.loads(request.data)
+    username=body.get("username")
+    password=body.get("password")
+    if not username:
+        return failure_response("Username is required", 400)
+    if not password:
+        return failure_response("Password is required", 400)
+
+    user = Users.query.filter(Users.username==username).first()
+
+    if user is None:
+        return failure_response("user does not exist")
+
+    if not user.verify_password(password):
+        return failure_response("incorrect username or password")
+    
+    return success_response(
+        {
+            "session_token": user.session_token,
+            "session_expiration": str(user.session_expiration),
+            "update_token": user.update_token
+        }, 201)
+
+
+@app.route("/api/session/", methods=["POST"])
+def update_session(): 
+    update_token = extract_token(request)
+
+    if update_token is None:
+        return failure_response("missing or invalid auth header")
+
+    user = Users.query.filter(Users.update_token==update_token).first()
+
+    if user is None:
+        return failure_response(f"invalid update token: {update_token}")
+
+    user.renew_session()
+    db.session.commit()
+
+    return success_response(
+        {
+            "session_token": user.session_token,
+            "session_expiration": str(user.session_expiration),
+            "update_token": user.update_token
+        }, 201)
+
+
+@app.route("/api/session/", methods=["GET"])
+def verify_session(): 
+    session_token = extract_token(request)
+
+    if session_token is None:
+        return failure_response("missing or invalid auth header")
+
+    user = Users.query.filter(Users.session_token==session_token).first()
+
+    if user is None or not user.verify_session_token(session_token):
+        return failure_response("invalid session token")
+    return success_response("session is active")
+  
+    
+@app.route("/api/users/<int:user_id>/", methods=["DELETE"])
+def delete_user(user_id):
+    user = Users.query.filter_by(id=user_id).first()
     if user is None:
         return failure_response("User does not exist")
     db.session.delete(user)
     db.session.commit()
     return success_response(user.serialize())
 
-@app.route("/api/users/<int:user_id>/")
-def get_user(user_id):
+  
+
+@app.route("/api/users/<int:user_id>/zipcode/", methods=["POST"])
+def change_zipcode(user_id):
     user = Users.query.filter_by(id=user_id).first()
+    body = json.loads(request.data)
     if user is None:
-        return failure_response("User does not exist")
-    return success_response(user.serialize())  
-
-@app.route("/api/courses/<int:course_id>/add/", methods=["POST"])
-def add_user_to_course(course_id):
-    course = Courses.query.filter_by(id=course_id).first()
-    body = json.loads(request.data)
-    if course is None:
-        return failure_response("Course does not exist")
-    user_id = body.get("user_id")
-    user = Users.query.filter_by(id=user_id).first()
-    if (body.get("type") == "instructor"):
-        course.instructors = [user]
-    else:
-        course.students = [user]
+        return failure_response("user does not exist")
+    zipcode = body.get("zipcode")
+    if Zipcodes.query.filter(Zipcodes.number==zipcode).first is None:
+        new_zipcode=Zipcodes(number=zipcode)
+        db.session.add(new_zipcode)
+    user.zipcode=zipcode
     db.session.commit()
-    return success_response(course.serialize())
-
-@app.route("/api/courses/<int:course_id>/assignment/", methods=["POST"])
-def create_assignment(course_id):
-    course = Courses.query.filter_by(id=course_id).first()
-    if course is None:
-        return failure_response("Course does not exist")
-    body = json.loads(request.data)
-    if not body.get("title"):
-        return failure_response("Assignment is missing a title", 400)
-    if not body.get("due_date"):
-        return failure_response("Assignment is missing a due date", 400)
-    new_assignment = Assignments(title=body.get("title"), due_date=body.get("due_date"), courses=course_id)
-    db.session.add(new_assignment)
-    db.session.commit()
-    return success_response(new_assignment.serialize(), 201)
+    return success_response(user.serialize())
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

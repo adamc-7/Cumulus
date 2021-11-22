@@ -34,6 +34,7 @@ class Users(db.Model):
         self.username=kwargs.get("username")
         self.password=bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
         self.zipcode=kwargs.get("zipcode")
+        self.times=kwargs.get("times")
         self.renew_session()
 
 
@@ -45,11 +46,9 @@ class Users(db.Model):
     def verify_password(self, password):
         return bcrypt.checkpw(password.encode("utf8"), self.password)
 
-    def verify_session(self, session_token):
-        return session_token ==self.session_token
+    def verify_session_token(self, session_token):
+        return session_token ==self.session_token and datetime.datetime.now < self.session_expiration
     
-    def update_session(self, update_token):
-        return update_token == self.update_token and datetime.datetime.now < self.session_expiration
 
     def subserialize(self):
         return{
@@ -70,6 +69,8 @@ class Users(db.Model):
 class Times(db.Model):
     __tablename__ = "times"
     id = db.Column(db.Integer, primary_key=True)
+    month = db.Column(db.Integer, nullable = False)
+    day = db.Column(db.Integer, nullable = False)
     hour = db.Column(db.Integer, nullable = False)
     minute = db.Column(db.Integer, nullable = False)
     time = db.Column(db.DateTime) #or change to db.Column(db.Float)
@@ -78,23 +79,28 @@ class Times(db.Model):
 
     def __init__(self, **kwargs):
         self.id = id
+        self.month=kwargs.get("month")
+        self.day=kwargs.get("day")
         self.hour=kwargs.get("hour")
         self.minute=kwargs.get("minute")
 
     def subserialize(self):
         return{
             "id": self.id,
-            "title": self.title,
-            "due_date": self.due_date
+            "month": self.month,
+            "day": self.day,
+            "hour": self.hour,
+            "minute": self.minute,
         }
     
     def serialize(self):
-        #course = Courses.query.filter_by(id=course_id).first()
         return{
             "id": self.id,
+            "month": self.month,
+            "day": self.day,
             "hour": self.hour,
             "minute": self.minute,
-            #"course": [course.subserialize()]
+            "users": [t.subserialize() for t in self.users]
         }
 
 
@@ -111,16 +117,14 @@ class Zipcodes(db.Model):
     def subserialize(self):
         return{
             "id": self.id,
-            "name": self.name,
-            "netid": self.netid
+            "number": self.number,
+            "country_code": self.country_code
         }
     
     def serialize(self):
-        courses = [t.subserialize() for t in self.student_courses]
-        courses+=[t.subserialize() for t in self.instructor_courses]
         return{
             "id": self.id,
-            "name": self.name,
-            "netid": self.netid,
-            "courses": courses
+            "number": self.number,
+            "country_code": self.country_code,
+            "users": [t.subserialize() for t in self.users]
         }
