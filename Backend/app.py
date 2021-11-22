@@ -26,7 +26,6 @@ api_key = "6045a3db7be80feeff53eb7f6c53586d"
 
 # your routes here
 
-#MATEO IS THE BEST CODER ABOVE BELLA
 
 def success_response(data, code=200):
     return json.dumps(data), code
@@ -45,28 +44,23 @@ def extract_token(request):
     return bearer_token
 
 
-
-
 #gets weather for a specific user with a specific zipcode for the day
 @app.route("/api/users/<int:user_id>/weather/daily/")
 def get_daily_weather(user_id):
     user = Users.query.filter_by(id=user_id).first()
+    if not user:
+        return failure_response("user does not exist")
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
-    print(zipcode.number)
-    print(zipcode.country_code)
-    country_code='US'
 
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{country_code}&appid={api_key}"
+    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
 
     response = requests.get(url).json()
-    print(response)
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,hourly,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
-    print(response1)
 
     final_response = {}
     temp_morn = response1['daily'][1]['temp']['morn']
@@ -113,11 +107,11 @@ def get_daily_weather(user_id):
 @app.route("/api/users/<int:user_id>/weather/hourly/")
 def get_hourly_weather(user_id):
     user = Users.query.filter_by(id=user_id).first()
-    zipcode_id = user.zipcode_id
-    zipcode = Zipcodes.query.filter_by(id=zipcode_id).first()
-    country_code = 'US'
+    if not user:
+        return failure_response("user does not exist")
+    zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
 
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{country_code}&appid={api_key}"
+    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
 
     response = requests.get(url).json()
     print(response)
@@ -159,18 +153,18 @@ def get_hourly_weather(user_id):
     if bool(snow_amount):
         final_response['Snow Amount'] = snow_amount
 
-
     return success_response(final_response) 
-
-
 
 
 
 @app.route("/api/users/")
 def get_users():
-    return success_response(
-        {"users": [t.serialize() for t in Users.query.all()]}
-    )
+    return success_response({"users": [t.serialize() for t in Users.query.all()]})
+
+
+@app.route("/api/zipcodes/")
+def get_zipcodes():
+    return success_response({"zipcodes": [t.serialize() for t in Zipcodes.query.all()]})
 
 
 #post contains username,password,zipcode
@@ -180,7 +174,7 @@ def create_user():
     username=body.get("username")
     password=body.get("password")
     zipcode=body.get("zipcode")
-    country_code = body.get("country_code")
+    country_code = body.get("country_code", "US")
     times = body.get("times", [])
     if not username:
         return failure_response("Username is required", 400)

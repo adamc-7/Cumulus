@@ -52,6 +52,11 @@ class Users(db.Model):
     def verify_session_token(self, session_token):
         return session_token ==self.session_token and datetime.datetime.now < self.session_expiration
     
+    def subsubserialize(self):
+        return{
+            "id": self.id,
+            "username": self.username,
+        }
 
     def subserialize(self):
         return{
@@ -116,7 +121,8 @@ class Zipcodes(db.Model):
 
     def __init__(self, **kwargs):
         self.number=kwargs.get("number")
-        self.country_code=kwargs.get("country_code", "US")
+        self.country_code=kwargs.get("country_code")
+
 
     def subserialize(self):
         return{
@@ -130,5 +136,5 @@ class Zipcodes(db.Model):
             "id": self.id,
             "number": self.number,
             "country_code": self.country_code,
-            "users": [t.subserialize() for t in self.users]
+            "users": [t.subsubserialize() for t in self.users]
         }
