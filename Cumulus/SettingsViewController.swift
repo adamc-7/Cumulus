@@ -14,15 +14,26 @@ class SettingsViewController: UIViewController {
     
     
     override func viewDidLoad() {
+        view.backgroundColor = .white
         locationLabel.text = "Location:\nIthaca, NY"
+        locationLabel.textColor = .black
+        locationLabel.translatesAutoresizingMaskIntoConstraints = false
         calendarLabel.text = "Calendar:\nGoogle Calendar"
+        calendarLabel.textColor = .black
+        calendarLabel.translatesAutoresizingMaskIntoConstraints = false
         homeButton.setTitle("Home", for: .normal)
+        homeButton.backgroundColor = .black
+        homeButton.translatesAutoresizingMaskIntoConstraints = false
+        homeButton.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
+        view.addSubview(locationLabel)
+        view.addSubview(calendarLabel)
+        view.addSubview(homeButton)
         setUpContraints()
     }
     
     func setUpContraints() {
         NSLayoutConstraint.activate([
-            locationLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            locationLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 200),
             locationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
         NSLayoutConstraint.activate([
@@ -36,5 +47,9 @@ class SettingsViewController: UIViewController {
         ])
      
         
+    }
+    
+    @objc func dismissViewController() {
+        dismiss(animated: true, completion: nil)
     }
 }

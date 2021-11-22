@@ -61,6 +61,7 @@ class ViewController: UIViewController {
         settingsButton.layer.cornerRadius = 4
         settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
         view.addSubview(settingsButton)
+        
         setupConstraints()
     }
 
@@ -72,6 +73,11 @@ class ViewController: UIViewController {
             mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: collectionViewPadding),
             mainCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -collectionViewPadding),
             mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -collectionViewPadding)
+        ])
+        
+        NSLayoutConstraint.activate([
+            settingsButton.topAnchor.constraint(equalTo: mainCollectionView.safeAreaLayoutGuide.bottomAnchor, constant: 20),
+            settingsButton.leadingAnchor.constraint(equalTo: mainCollectionView.leadingAnchor, constant: collectionViewPadding)
         ])
     }
     @objc func presentViewControllerButtonPressed() {
