@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */; };
+		EDA88F43274B221F00D84AB7 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F42274B221F00D84AB7 /* Event.swift */; };
 		EDB2694227483925009070F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2694127483925009070F4 /* AppDelegate.swift */; };
 		EDB2694427483925009070F4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2694327483925009070F4 /* SceneDelegate.swift */; };
 		EDB2694627483925009070F4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2694527483925009070F4 /* ViewController.swift */; };
@@ -35,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		EDA88F42274B221F00D84AB7 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		EDB2693E27483925009070F4 /* Cumulus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cumulus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDB2694127483925009070F4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EDB2694327483925009070F4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 				EDB2694A27483926009070F4 /* Assets.xcassets */,
 				EDB2694C27483926009070F4 /* LaunchScreen.storyboard */,
 				EDB2694F27483926009070F4 /* Info.plist */,
+				EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */,
+				EDA88F42274B221F00D84AB7 /* Event.swift */,
 			);
 			path = Cumulus;
 			sourceTree = "<group>";
@@ -256,7 +262,9 @@
 			files = (
 				EDB2694627483925009070F4 /* ViewController.swift in Sources */,
 				EDB2694227483925009070F4 /* AppDelegate.swift in Sources */,
+				EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */,
 				EDB2694427483925009070F4 /* SceneDelegate.swift in Sources */,
+				EDA88F43274B221F00D84AB7 /* Event.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
