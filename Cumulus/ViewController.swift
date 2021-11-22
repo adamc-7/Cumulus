@@ -52,7 +52,7 @@ class ViewController: UIViewController {
         mainCollectionView.delegate = self
         
         
-        view.addSubview(mainCollectionView
+        view.addSubview(mainCollectionView)
         
         presentButton.translatesAutoresizingMaskIntoConstraints = false
         presentButton.setTitle("Edit Color", for: .normal)
