@@ -37,8 +37,8 @@ def failure_response(message, code=404):
 
 
 #gets weather for a specific user with a specific zipcode for the day
-@app.route("/api/users/<int:user_id>/weather/", methods=["POST"])
-def get_weather(api_key, user_id):
+@app.route("/api/users/<int:user_id>/weather/daily/")
+def get_daily_weather(api_key, user_id):
     user = Users.query.filter_by(id=user_id).first()
     zipcode_id = user.zipcode_id
     zipcode = Zipcodes.query.filter_by(id=zipcode_id).first()
@@ -88,7 +88,6 @@ def get_weather(api_key, user_id):
         snow_amount = response1['daily']['snow']
     else:
         snow_amount = None
-    snow_amount = response1['daily']['snow']
     final_response['Morning Temp'] = temp_morn
     final_response['Day Temp'] = temp_day
     final_response['Evening Temp'] = temp_eve
@@ -104,7 +103,61 @@ def get_weather(api_key, user_id):
 
 
 
-@app.route("/api/users/<int:user_id>/weather/", methods=["POST"])
+
+
+@app.route("/api/users/<int:user_id>/weather/hourly")
+def get_hourly_weather(api_key, user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    zipcode_id = user.zipcode_id
+    zipcode = Zipcodes.query.filter_by(id=zipcode_id).first()
+
+    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
+
+    response = requests.get(url).json()
+    lon = response['coord']['lon']
+    lat = response['coord']['lat']
+
+    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={currently, minutely, daily, alerts}&appid={api_key}"
+    response1 = requests.get(url1).json()
+    temp = response1['main']['temp']
+    temp = math.floor((temp * 1.8) - 459.67) 
+
+    pop = response1['hour']['pop']
+    if pop >= 0.8:
+        rain_possible = "Very likely"
+    elif pop >= 0.6:
+        rain_possible = "Likely"
+    elif pop >= 0.4:
+        rain_possible = "Somewhat likely"
+    elif pop >= 0.2:
+        rain_possible = "Unlikely"
+    elif pop >= 0:
+        rain_possible = "Clear Day"
+    if 'rain' in response1['hour']:
+        rain_amount = response1['hour']['rain']['1h']
+    else:
+        rain_amount = None
+    if 'snow' in response1['hour']:
+        snow_amount = response1['hour']['snow']['1h']
+    else:
+        snow_amount = None
+
+    final_response = {}
+    final_response['Hourly Temp'] = temp
+    final_response['Chance of Precipitation'] = pop
+    final_response['Message'] = rain_possible
+    if bool(rain_amount):
+        final_response['Rain Amount'] = rain_amount
+    if bool(snow_amount):
+        final_response['Snow Amount'] = snow_amount
+
+    return success_response(final_response) 
+
+
+    
+
+
+
 
 @app.route("/api/courses/")
 def get_courses():
