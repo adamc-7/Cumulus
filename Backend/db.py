@@ -13,7 +13,7 @@ association_table = db.Table(
     "association",
     db.Model.metadata,
     db.Column("users", db.Integer, db.ForeignKey("users.id")),
-    db.Column("times", db.DateTime, db.ForeignKey("courses.id")),
+    db.Column("times", db.DateTime, db.ForeignKey("times.id")),
 )
 
 
@@ -26,22 +26,25 @@ class Users(db.Model):
     password = db.Column(db.String, nullable=False)
     zipcode_id = db.Column(db.Integer, db.ForeignKey("zipcodes.id"), nullable=False)
     times = db.relationship("Times", secondary=association_table, back_populates="users")
-    session_token= db.Column(db.String, nullable=False, unique=True)
-    update_token= db.Column(db.String, nullable=False, unique=True)
-    session_expiration=db.Column(db.DateTime, nullable=False)
+    session_token = db.Column(db.String, nullable=False, unique=True)
+    update_token = db.Column(db.String, nullable=False, unique=True)
+    session_expiration = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, **kwargs):
         self.username=kwargs.get("username")
         self.password=bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
-        self.zipcode=kwargs.get("zipcode")
+        self.zipcode_id=kwargs.get("zipcode_id")
         self.times=kwargs.get("times")
         self.renew_session()
 
+    def _urlsafe_base_64(self):
+        return hashlib.sha1(os.urandom(64)).hexdigest()
 
     def renew_session(self):
-        self.session_token = self.hashlib.sha1(os.urandom(64)).hexdigest()
+        self.session_token = self._urlsafe_base_64()
         self.session_expiration = datetime.datetime.now() + datetime.timedelta(days=1)
-        self.update_token = self.hashlib.sha1(os.urandom(64)).hexdigest()
+        self.update_token = self._urlsafe_base_64()
+        print(self.session_token)
 
     def verify_password(self, password):
         return bcrypt.checkpw(password.encode("utf8"), self.password)
@@ -54,14 +57,14 @@ class Users(db.Model):
         return{
             "id": self.id,
             "username": self.username,
-            "zipcode": self.zipcode
+            "zipcode": Zipcodes.query.filter(Zipcodes.id==self.zipcode_id).first().number,
         }
     
     def serialize(self):
         return{
             "id": self.id,
             "username": self.username,
-            "zipcode": self.zipcode,
+            "zipcode": Zipcodes.query.filter(Zipcodes.id==self.zipcode_id).first().number,
             "times": [t.subserialize() for t in self.times]
         }
 
@@ -73,8 +76,8 @@ class Times(db.Model):
     day = db.Column(db.Integer, nullable = False)
     hour = db.Column(db.Integer, nullable = False)
     minute = db.Column(db.Integer, nullable = False)
-    time = db.Column(db.DateTime) #or change to db.Column(db.Float)
-    users = db.Relationship("Users", secondary=association_table, back_populates="times")
+    #time = db.Column(db.DateTime) #or change to db.Column(db.Float)
+    users = db.relationship("Users", secondary=association_table, back_populates="times")
 
 
     def __init__(self, **kwargs):
@@ -112,7 +115,8 @@ class Zipcodes(db.Model):
     users = db.relationship("Users")
 
     def __init__(self, **kwargs):
-        self.netid=kwargs.get("number")
+        self.number=kwargs.get("number")
+        self.country_code=kwargs.get("country_code", "001")
 
     def subserialize(self):
         return{
