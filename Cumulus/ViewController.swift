@@ -54,13 +54,13 @@ class ViewController: UIViewController {
         
         view.addSubview(mainCollectionView)
         
-        presentButton.translatesAutoresizingMaskIntoConstraints = false
-        presentButton.setTitle("Edit Color", for: .normal)
-        presentButton.setTitleColor(.white, for: .normal)
-        presentButton.backgroundColor = UIColor(red: 56/255, green: 61/255, blue: 68/255, alpha: 1)
-        presentButton.layer.cornerRadius = 4
-        presentButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
-        view.addSubview(presentButton)
+        settingsButton.translatesAutoresizingMaskIntoConstraints = false
+        settingsButton.setTitle("Edit Color", for: .normal)
+        settingsButton.setTitleColor(.white, for: .normal)
+        settingsButton.backgroundColor = UIColor(red: 56/255, green: 61/255, blue: 68/255, alpha: 1)
+        settingsButton.layer.cornerRadius = 4
+        settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
+        view.addSubview(settingsButton)
         setupConstraints()
     }
 
@@ -74,7 +74,13 @@ class ViewController: UIViewController {
             mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -collectionViewPadding)
         ])
     }
+    @objc func presentViewControllerButtonPressed() {
+        let vc = SettingsViewController()
+        present(vc, animated: true, completion: nil)
+    }
+    
 }
+
 
 extension ViewController: UICollectionViewDataSource {
     
