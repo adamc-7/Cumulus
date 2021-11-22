@@ -55,13 +55,14 @@ class ViewController: UIViewController {
         view.addSubview(mainCollectionView)
         
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
-        settingsButton.setTitle("Edit Color", for: .normal)
+        settingsButton.setTitle("Settings", for: .normal)
         settingsButton.setTitleColor(.white, for: .normal)
         settingsButton.backgroundColor = UIColor(red: 56/255, green: 61/255, blue: 68/255, alpha: 1)
         settingsButton.layer.cornerRadius = 4
         settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
         view.addSubview(settingsButton)
-        
+        self.modalPresentationStyle = .overFullScreen
+
         setupConstraints()
     }
 
@@ -76,7 +77,7 @@ class ViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            settingsButton.topAnchor.constraint(equalTo: mainCollectionView.safeAreaLayoutGuide.bottomAnchor, constant: 20),
+            settingsButton.topAnchor.constraint(equalTo: mainCollectionView.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             settingsButton.leadingAnchor.constraint(equalTo: mainCollectionView.leadingAnchor, constant: collectionViewPadding)
         ])
     }

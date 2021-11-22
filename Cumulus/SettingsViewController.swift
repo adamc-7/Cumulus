@@ -15,10 +15,10 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         view.backgroundColor = .white
-        locationLabel.text = "Location:\nIthaca, NY"
+        locationLabel.text = "Location:"
         locationLabel.textColor = .black
         locationLabel.translatesAutoresizingMaskIntoConstraints = false
-        calendarLabel.text = "Calendar:\nGoogle Calendar"
+        calendarLabel.text = "Calendar:"
         calendarLabel.textColor = .black
         calendarLabel.translatesAutoresizingMaskIntoConstraints = false
         homeButton.setTitle("Home", for: .normal)
@@ -34,15 +34,15 @@ class SettingsViewController: UIViewController {
     func setUpContraints() {
         NSLayoutConstraint.activate([
             locationLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 200),
-            locationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+            locationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
         ])
         NSLayoutConstraint.activate([
-            calendarLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 20),
-            calendarLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+            calendarLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 30),
+            calendarLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
         ])
         
         NSLayoutConstraint.activate([
-            homeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            homeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             homeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
      
