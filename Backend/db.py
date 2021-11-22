@@ -116,7 +116,7 @@ class Zipcodes(db.Model):
 
     def __init__(self, **kwargs):
         self.number=kwargs.get("number")
-        self.country_code=kwargs.get("country_code", "001")
+        self.country_code=kwargs.get("country_code", "US")
 
     def subserialize(self):
         return{

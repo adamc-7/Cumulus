@@ -49,39 +49,35 @@ def extract_token(request):
 
 #gets weather for a specific user with a specific zipcode for the day
 @app.route("/api/users/<int:user_id>/weather/daily/")
-def get_daily_weather(api_key, user_id):
+def get_daily_weather(user_id):
     user = Users.query.filter_by(id=user_id).first()
-    zipcode_id = user.zipcode_id
-    zipcode = Zipcodes.query.filter_by(id=zipcode_id).first()
-    #body = json.loads(request.data)
-    
-    #if not body.get("country_code"):
-    #    country_code = '001'
-   # else:
-       # country_code = body.get("country_code")
+    zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
+    print(zipcode.number)
+    print(zipcode.country_code)
+    country_code='US'
 
-
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
+    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{country_code}&appid={api_key}"
 
     response = requests.get(url).json()
+    print(response)
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
-    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=currently,minutely,hourly,alerts&appid={api_key}"
+
+    url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,hourly,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
-    temp = response1['main']['temp']
-    temp = math.floor((temp * 1.8) - 459.67)
+    print(response1)
 
     final_response = {}
-    temp_morn = response1['daily']['temp']['morn']
+    temp_morn = response1['daily'][1]['temp']['morn']
     temp_morn = math.floor((temp_morn * 1.8) - 459.67)
-    temp_day = response1['daily']['temp']['day']
+    temp_day = response1['daily'][1]['temp']['day']
     temp_day = math.floor((temp_day * 1.8) - 459.67)
-    temp_eve = response1['daily']['temp']['eve']
+    temp_eve = response1['daily'][1]['temp']['eve']
     temp_eve = math.floor((temp_eve * 1.8) - 459.67)
-    temp_night= response1['daily']['temp']['night']
+    temp_night= response1['daily'][1]['temp']['night']
     temp_night = math.floor((temp_night * 1.8) - 459.67)
-    pop = response1['daily']['pop']
+    pop = response1['daily'][1]['pop']
     if pop >= 0.8:
         rain_possible = "Very likely"
     elif pop >= 0.6:
@@ -92,12 +88,12 @@ def get_daily_weather(api_key, user_id):
         rain_possible = "Unlikely"
     elif pop >= 0:
         rain_possible = "Clear Day"
-    if 'rain' in response1['daily']:
-        rain_amount = response1['daily']['rain']
+    if 'rain' in response1['daily'][1]:
+        rain_amount = response1['daily'][1]['rain']
     else:
         rain_amount = None
-    if 'snow' in response1['daily']:
-        snow_amount = response1['daily']['snow']
+    if 'snow' in response1['daily'][1]:
+        snow_amount = response1['daily'][1]['snow']
     else:
         snow_amount = None
     final_response['Morning Temp'] = temp_morn
@@ -114,24 +110,27 @@ def get_daily_weather(api_key, user_id):
     return success_response(final_response)
 
 
-@app.route("/api/users/<int:user_id>/weather/hourly")
-def get_hourly_weather(api_key, user_id):
+@app.route("/api/users/<int:user_id>/weather/hourly/")
+def get_hourly_weather(user_id):
     user = Users.query.filter_by(id=user_id).first()
     zipcode_id = user.zipcode_id
     zipcode = Zipcodes.query.filter_by(id=zipcode_id).first()
+    country_code = 'US'
 
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
+    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{country_code}&appid={api_key}"
 
     response = requests.get(url).json()
+    print(response)
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
-    url1 = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=currently,minutely,daily,alerts&appid={api_key}"
+    url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
-    temp = response1['main']['temp']
+    print(response1)
+    temp = response1['hourly'][1]['temp']
     temp = math.floor((temp * 1.8) - 459.67) 
 
-    pop = response1['hour']['pop']
+    pop = response1['hourly'][1]['pop']
     if pop >= 0.8:
         rain_possible = "Very likely"
     elif pop >= 0.6:
@@ -142,12 +141,12 @@ def get_hourly_weather(api_key, user_id):
         rain_possible = "Unlikely"
     elif pop >= 0:
         rain_possible = "Clear Day"
-    if 'rain' in response1['hour']:
-        rain_amount = response1['hour']['rain']['1h']
+    if 'rain' in response1['hourly'][1]:
+        rain_amount = response1['hourly'][1]['rain']['1h']
     else:
         rain_amount = None
-    if 'snow' in response1['hour']:
-        snow_amount = response1['hour']['snow']['1h']
+    if 'snow' in response1['hourly'][1]:
+        snow_amount = response1['hourly'][1]['snow']['1h']
     else:
         snow_amount = None
 
@@ -160,7 +159,10 @@ def get_hourly_weather(api_key, user_id):
     if bool(snow_amount):
         final_response['Snow Amount'] = snow_amount
 
+
     return success_response(final_response) 
+
+
 
 
 
@@ -178,6 +180,7 @@ def create_user():
     username=body.get("username")
     password=body.get("password")
     zipcode=body.get("zipcode")
+    country_code = body.get("country_code")
     times = body.get("times", [])
     if not username:
         return failure_response("Username is required", 400)
@@ -186,7 +189,7 @@ def create_user():
     if not zipcode:
         return failure_response("Zipcode is required", 400)
     if Zipcodes.query.filter(Zipcodes.number==zipcode).first() is None:
-        new_zipcode=Zipcodes(number=zipcode)
+        new_zipcode=Zipcodes(number=zipcode, country_code=country_code)
         db.session.add(new_zipcode)
         db.session.commit()
     if Users.query.filter(Users.username==username).first() is not None:
