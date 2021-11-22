@@ -163,8 +163,6 @@ def get_hourly_weather(api_key, user_id):
     return success_response(final_response) 
 
 
-@app.route("/api/users/<int:user_id>/weather/", methods=["POST"])
-
 
 @app.route("/api/users/")
 def get_users():
@@ -187,13 +185,14 @@ def create_user():
         return failure_response("Password is required", 400)
     if not zipcode:
         return failure_response("Zipcode is required", 400)
-    if Zipcodes.query.filter(Zipcodes.number==zipcode).first is None:
+    if Zipcodes.query.filter(Zipcodes.number==zipcode).first() is None:
         new_zipcode=Zipcodes(number=zipcode)
         db.session.add(new_zipcode)
+        db.session.commit()
     if Users.query.filter(Users.username==username).first() is not None:
         return failure_response("user already exists")
-    
-    new_user = Users(username=username, password=password, zipcode=zipcode, times=times)
+    zipcode_id=Zipcodes.query.filter(Zipcodes.number==zipcode).first().id
+    new_user = Users(username=username, password=password, zipcode_id=zipcode_id, times=times)
     db.session.add(new_user)
     db.session.commit()
 
@@ -287,7 +286,7 @@ def change_zipcode(user_id):
     if user is None:
         return failure_response("user does not exist")
     zipcode = body.get("zipcode")
-    if Zipcodes.query.filter(Zipcodes.number==zipcode).first is None:
+    if Zipcodes.query.filter(Zipcodes.number==zipcode).first() is None:
         new_zipcode=Zipcodes(number=zipcode)
         db.session.add(new_zipcode)
     user.zipcode=zipcode
