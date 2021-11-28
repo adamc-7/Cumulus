@@ -13,7 +13,7 @@ association_table = db.Table(
     "association",
     db.Model.metadata,
     db.Column("users", db.Integer, db.ForeignKey("users.id")),
-    db.Column("times", db.DateTime, db.ForeignKey("times.id")),
+    db.Column("times", db.String, db.ForeignKey("times.id")),
 )
 
 
@@ -34,7 +34,6 @@ class Users(db.Model):
         self.username=kwargs.get("username")
         self.password=bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
         self.zipcode_id=kwargs.get("zipcode_id")
-        self.times=kwargs.get("times")
         self.renew_session()
 
     def _urlsafe_base_64(self):
@@ -50,7 +49,7 @@ class Users(db.Model):
         return bcrypt.checkpw(password.encode("utf8"), self.password)
 
     def verify_session_token(self, session_token):
-        return session_token ==self.session_token and datetime.datetime.now < self.session_expiration
+        return session_token ==self.session_token and datetime.datetime.now() < self.session_expiration
     
     def subsubserialize(self):
         return{
@@ -62,14 +61,14 @@ class Users(db.Model):
         return{
             "id": self.id,
             "username": self.username,
-            "zipcode": Zipcodes.query.filter(Zipcodes.id==self.zipcode_id).first().number,
+            "zipcode": Zipcodes.query.filter_by(id=self.zipcode_id).first().number
         }
     
     def serialize(self):
         return{
             "id": self.id,
             "username": self.username,
-            "zipcode": Zipcodes.query.filter(Zipcodes.id==self.zipcode_id).first().number,
+            "zipcode": Zipcodes.query.filter_by(id=self.zipcode_id).first().number,
             "times": [t.subserialize() for t in self.times]
         }
 
@@ -77,37 +76,22 @@ class Users(db.Model):
 class Times(db.Model):
     __tablename__ = "times"
     id = db.Column(db.Integer, primary_key=True)
-    month = db.Column(db.Integer, nullable = False)
-    day = db.Column(db.Integer, nullable = False)
-    hour = db.Column(db.Integer, nullable = False)
-    minute = db.Column(db.Integer, nullable = False)
-    #time = db.Column(db.DateTime) #or change to db.Column(db.Float)
+    time = db.Column(db.String, nullable = False) 
     users = db.relationship("Users", secondary=association_table, back_populates="times")
 
-
-    def __init__(self, **kwargs):
-        self.id = id
-        self.month=kwargs.get("month")
-        self.day=kwargs.get("day")
-        self.hour=kwargs.get("hour")
-        self.minute=kwargs.get("minute")
+    def __init__(self, **kwargs):        
+        self.time = kwargs.get("time")
 
     def subserialize(self):
         return{
             "id": self.id,
-            "month": self.month,
-            "day": self.day,
-            "hour": self.hour,
-            "minute": self.minute,
+            "time": self.time
         }
     
     def serialize(self):
         return{
             "id": self.id,
-            "month": self.month,
-            "day": self.day,
-            "hour": self.hour,
-            "minute": self.minute,
+            "time": self.time,
             "users": [t.subserialize() for t in self.users]
         }
 
