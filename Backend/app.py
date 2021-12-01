@@ -48,15 +48,15 @@ def extract_token(request):
 
 
 #gets weather for a specific user with a specific zipcode for the day
-@app.route("/api/users/<int:user_id>/weather/daily/")
-def get_daily_weather(user_id):
+@app.route("/api/users/weather/daily/")
+def get_daily_weather():
     
 
     session_token = extract_token(request)
-    if not verify_session(user_id=user_id, session_token=session_token):
+    if not verify_session(session_token=session_token):
         return failure_response("incorrect token", 401)
     
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(session_token=session_token).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
     
 
@@ -106,14 +106,14 @@ def get_daily_weather(user_id):
     return success_response(final_response)
 
 
-@app.route("/api/users/<int:user_id>/weather/hourly/")
-def get_hourly_weather(user_id):
+@app.route("/api/users/weather/hourly/")
+def get_hourly_weather():
 
     session_token = extract_token(request)
-    if not verify_session(user_id=user_id, session_token=session_token):
+    if not verify_session(session_token=session_token):
         return failure_response("incorrect token", 401)
 
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(session_token=session_token).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
 
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
@@ -181,12 +181,12 @@ def pops(pop):
         rain_possible = "Clear Day"
     return rain_possible
 
-@app.route("/api/users/<int:user_id>/weather/current/")
-def get_current_hour_weather(user_id):
+@app.route("/api/users/weather/current/")
+def get_current_hour_weather():
     session_token = extract_token(request)
-    if not verify_session(user_id=user_id, session_token=session_token):
+    if not verify_session(session_token=session_token):
         return failure_response("incorrect token", 401)
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(session_token=session_token).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
 
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
@@ -299,44 +299,42 @@ def login():
         })
 
 
-@app.route("/api/session/<int:user_id>/")
-def update_session(user_id): 
+@app.route("/api/session/")
+def update_session(): 
     update_token = extract_token(request)
     if update_token is None:
         return failure_response("missing or invalid auth header", 401)
-    user_from_update_token = Users.query.filter_by(update_token=update_token).first()
-    user_from_id = Users.query.filter_by(id=user_id).first()
-    if user_from_update_token is None or user_from_update_token is not user_from_id:
+    user = Users.query.filter_by(update_token=update_token).first()
+    if user is None:
         return failure_response(f"invalid update token: {update_token}", 401)
-    user_from_update_token.renew_session()
+    user.renew_session()
     db.session.commit()
 
     return success_response(
         {
-            "session_token": user_from_update_token.session_token,
-            "session_expiration": str(user_from_update_token.session_expiration),
-            "update_token": user_from_update_token.update_token
+            "session_token": user.session_token,
+            "session_expiration": str(user.session_expiration),
+            "update_token": user.update_token
         })
 
-def verify_session(user_id, session_token):
+def verify_session(session_token):
     if session_token is None:
         return False
     user_from_token = Users.query.filter_by(session_token=session_token).first()
-    user_from_id = Users.query.filter_by(id=user_id).first()
 
-    if user_from_token is None or user_from_id is not user_from_token or not user_from_token.verify_session_token(session_token):
+    if user_from_token is None or not user_from_token.verify_session_token(session_token):
         return False
     return True
   
     
-@app.route("/api/users/<int:user_id>/", methods=["DELETE"])
-def delete_user(user_id):
+@app.route("/api/users/", methods=["DELETE"])
+def delete_user():
     
     session_token = extract_token(request)
-    if not verify_session(user_id=user_id, session_token=session_token):
+    if not verify_session(session_token=session_token):
         return failure_response("invalid token", 401)
     
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(session_token=session_token).first()
     if user is None:
         return failure_response("User does not exist")
     db.session.delete(user)
@@ -345,14 +343,14 @@ def delete_user(user_id):
 
   
 
-@app.route("/api/users/<int:user_id>/zipcode/", methods=["POST"])
-def change_zipcode(user_id):
+@app.route("/api/users/zipcode/", methods=["POST"])
+def change_zipcode():
     
     session_token = extract_token(request)
-    if not verify_session(user_id=user_id, session_token=session_token):
+    if not verify_session(session_token=session_token):
         return failure_response("invalid token", 401)
     
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(session_token=session_token).first()
     if user is None:
         return failure_response("user does not exist")
     body = json.loads(request.data)
@@ -366,14 +364,14 @@ def change_zipcode(user_id):
     db.session.commit()
     return success_response(user.serialize())
 
-@app.route("/api/users/<int:user_id>/times/", methods=['POST'])
-def add_times(user_id):
+@app.route("/api/users/times/", methods=['POST'])
+def add_times():
     
     session_token = extract_token(request)
-    if not verify_session(user_id=user_id, session_token=session_token):
+    if not verify_session(session_token=session_token):
         return failure_response("invalid token", 401)
 
-    user = Users.query.filter_by(id=user_id).first()
+    user = Users.query.filter_by(session_token=session_token).first()
     body = json.loads(request.data)
     if user is None:
         return failure_response("user does not exist")
