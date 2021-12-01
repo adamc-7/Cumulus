@@ -9,6 +9,7 @@ from flask import request
 import requests
 import math
 import datetime
+import os
 
 
 app = Flask(__name__)
@@ -53,7 +54,7 @@ def get_daily_weather(user_id):
 
     session_token = extract_token(request)
     if not verify_session(user_id=user_id, session_token=session_token):
-        return failure_response("invalid token")
+        return failure_response("incorrect token", 401)
     
     user = Users.query.filter_by(id=user_id).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
@@ -62,6 +63,8 @@ def get_daily_weather(user_id):
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
 
     response = requests.get(url).json()
+    if response['message'] == 'city not found':
+        return failure_response('Invalid zipcode or country code')
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
@@ -108,7 +111,7 @@ def get_hourly_weather(user_id):
 
     session_token = extract_token(request)
     if not verify_session(user_id=user_id, session_token=session_token):
-        return failure_response("invalid token")
+        return failure_response("incorrect token", 401)
 
     user = Users.query.filter_by(id=user_id).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
@@ -116,7 +119,8 @@ def get_hourly_weather(user_id):
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
 
     response = requests.get(url).json()
-    print(response)
+    if response['message'] == 'city not found':
+        return failure_response('Invalid zipcode or country code')
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
@@ -181,14 +185,15 @@ def pops(pop):
 def get_current_hour_weather(user_id):
     session_token = extract_token(request)
     if not verify_session(user_id=user_id, session_token=session_token):
-        return failure_response("invalid token")
+        return failure_response("incorrect token", 401)
     user = Users.query.filter_by(id=user_id).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
 
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
 
     response = requests.get(url).json()
-    print(response)
+    if response['message'] == 'city not found':
+        return failure_response('Invalid zipcode or country code')
     lon = response['coord']['lon']
     lat = response['coord']['lat']
 
@@ -241,7 +246,7 @@ def create_user():
     body = json.loads(request.data)
     username=body.get("username")
     password=body.get("password")
-    zipcode=body.get("zipcode")
+    zipcode=str(body.get("zipcode"))
     country_code = body.get("country_code", "US")
     if not username:
         return failure_response("Username is required", 400)
@@ -266,7 +271,6 @@ def create_user():
             "session_expiration": str(new_user.session_expiration),
             "update_token": new_user.update_token
         }, 201)
-    #return success_response(new_user.serialize(), 201)
 
 
 @app.route("/api/login/", methods=["POST"])
@@ -285,25 +289,25 @@ def login():
         return failure_response("user does not exist")
 
     if not user.verify_password(password):
-        return failure_response("incorrect username or password")
+        return failure_response("incorrect username or password", 401)
     
     return success_response(
         {
             "session_token": user.session_token,
             "session_expiration": str(user.session_expiration),
             "update_token": user.update_token
-        }, 201)
+        })
 
 
 @app.route("/api/session/<int:user_id>/")
 def update_session(user_id): 
     update_token = extract_token(request)
     if update_token is None:
-        return failure_response("missing or invalid auth header")
+        return failure_response("missing or invalid auth header", 401)
     user_from_update_token = Users.query.filter_by(update_token=update_token).first()
     user_from_id = Users.query.filter_by(id=user_id).first()
     if user_from_update_token is None or user_from_update_token is not user_from_id:
-        return failure_response(f"invalid update token: {update_token}")
+        return failure_response(f"invalid update token: {update_token}", 401)
     user_from_update_token.renew_session()
     db.session.commit()
 
@@ -312,7 +316,7 @@ def update_session(user_id):
             "session_token": user_from_update_token.session_token,
             "session_expiration": str(user_from_update_token.session_expiration),
             "update_token": user_from_update_token.update_token
-        }, 201)
+        })
 
 def verify_session(user_id, session_token):
     if session_token is None:
@@ -330,7 +334,7 @@ def delete_user(user_id):
     
     session_token = extract_token(request)
     if not verify_session(user_id=user_id, session_token=session_token):
-        return failure_response("invalid token")
+        return failure_response("invalid token", 401)
     
     user = Users.query.filter_by(id=user_id).first()
     if user is None:
@@ -346,14 +350,14 @@ def change_zipcode(user_id):
     
     session_token = extract_token(request)
     if not verify_session(user_id=user_id, session_token=session_token):
-        return failure_response("invalid token")
+        return failure_response("invalid token", 401)
     
     user = Users.query.filter_by(id=user_id).first()
     if user is None:
         return failure_response("user does not exist")
     body = json.loads(request.data)
-    zipcode = body.get("zipcode")
-    country_code = body.get("country_code", "US")
+    zipcode = str(body.get("zipcode"))
+    country_code = str(body.get("country_code", "US"))
     if Zipcodes.query.filter_by(number=zipcode).first() is None:
         new_zipcode=Zipcodes(number=zipcode, country_code=country_code)
         db.session.add(new_zipcode)
@@ -367,7 +371,7 @@ def add_times(user_id):
     
     session_token = extract_token(request)
     if not verify_session(user_id=user_id, session_token=session_token):
-        return failure_response("invalid token")
+        return failure_response("invalid token", 401)
 
     user = Users.query.filter_by(id=user_id).first()
     body = json.loads(request.data)
@@ -375,7 +379,7 @@ def add_times(user_id):
         return failure_response("user does not exist")
     times = body.get("time")
     if times is None:
-        return failure_response("Must enter times to add!")
+        return failure_response("Must enter times to add!", 400)
     for time in times:
         if Times.query.filter_by(time=time).first() is None:
             new_time = Times(time=time)
@@ -387,4 +391,5 @@ def add_times(user_id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = os.environ.get("PORT", 5000)
+    app.run(host="0.0.0.0", port=port) 
