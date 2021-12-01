@@ -55,15 +55,14 @@ def get_daily_weather():
     session_token = extract_token(request)
     if not verify_session(session_token=session_token):
         return failure_response("incorrect token", 401)
-    
     user = Users.query.filter_by(session_token=session_token).first()
     zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
-    
+
 
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
 
     response = requests.get(url).json()
-    if response['message'] == 'city not found':
+    if 'message' in response and response['message'] == 'city not found':
         return failure_response('Invalid zipcode or country code')
     lon = response['coord']['lon']
     lat = response['coord']['lat']
@@ -126,7 +125,6 @@ def get_hourly_weather():
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
-    print(response1)
 
     final_response = {}
 
@@ -199,7 +197,6 @@ def get_current_hour_weather():
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
     response1 = requests.get(url1).json()
-    print(response1)
      
 
     finalresponse = {}
@@ -343,7 +340,7 @@ def delete_user():
 
   
 
-@app.route("/api/users/zipcode/", methods=["POST"])
+@app.route("/api/zipcode/", methods=["POST"])
 def change_zipcode():
     
     session_token = extract_token(request)
