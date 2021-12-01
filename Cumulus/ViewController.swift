@@ -27,12 +27,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
-        title = "Events"
+       // let appearance = UINavigationBarAppearance()
+        //appearance.configureWithOpaqueBackground()
+        //appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        //navigationController?.navigationBar.standardAppearance = appearance
+        //navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+        //title = "Events"
         view.backgroundColor = .white
         
         
@@ -62,7 +62,7 @@ class ViewController: UIViewController {
         settingsButton.layer.cornerRadius = 4
         settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
         view.addSubview(settingsButton)
-        self.modalPresentationStyle = .overFullScreen
+       // self.modalPresentationStyle = .overFullScreen
 
         requestAccess()
         setupConstraints()
@@ -79,8 +79,8 @@ class ViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            settingsButton.topAnchor.constraint(equalTo: mainCollectionView.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            settingsButton.leadingAnchor.constraint(equalTo: mainCollectionView.leadingAnchor, constant: collectionViewPadding)
+            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            settingsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 331)
         ])
     }
     @objc func presentViewControllerButtonPressed() {
