@@ -21,7 +21,7 @@ class SettingsViewController: UIViewController {
         view.backgroundColor = .white
         locationLabel.text = "Location:"
         locationLabel.textColor = darkBlue
-        locationLabel.font = UIFont
+//        locationLabel.font = UIFont
         locationLabel.font = .systemFont(ofSize: 18, weight: UIFont.Weight(rawValue: 700))
         locationLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(locationLabel)

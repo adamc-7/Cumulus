@@ -63,8 +63,10 @@ class ViewController: UIViewController {
         settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
         view.addSubview(settingsButton)
        // self.modalPresentationStyle = .overFullScreen
+        getEvents()
+        var eventsRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getEvents), userInfo: nil, repeats: true)
 
-        requestAccess()
+//        requestAccess()
         setupConstraints()
     }
 
@@ -90,40 +92,53 @@ class ViewController: UIViewController {
     
     let eventStore = EKEventStore()
 
-    func requestAccess() {
+    @objc func getEvents() {
         eventStore.requestAccess(to: .event) { (granted, error) in
             if granted {
-    //            var events: [EKEvent]? = nil
-    //            events = eventStore.events(matching: <#T##NSPredicate#>)
-                // Get the appropriate calendar.
                 var calendar = Calendar.current
-
+//                var calendar = self.eventStore.defaultCalendarForNewEvents
+                
                 // Create the start date components
                 var oneDayAgoComponents = DateComponents()
                 oneDayAgoComponents.day = -1
                 var oneDayAgo = calendar.date(byAdding: oneDayAgoComponents, to: Date(), wrappingComponents: false)
 
                 // Create the end date components.
-                var oneYearFromNowComponents = DateComponents()
-                oneYearFromNowComponents.year = 1
-                var oneYearFromNow = calendar.date(byAdding: oneYearFromNowComponents, to: Date(), wrappingComponents: false)
+                var oneDayFromNowComponents = DateComponents()
+                oneDayFromNowComponents.year = 1
+                var oneDayFromNow = calendar.date(byAdding: oneDayFromNowComponents, to: Date(), wrappingComponents: false)
+                var userCalendars = self.eventStore.calendars(for: .event)
+                for calendar in userCalendars {
+                    // This checking will remove Birthdays and Hollidays callendars
+                    if(calendar.allowsContentModifications) {
+                        var predicate: NSPredicate? = nil
+                        if let anAgo = oneDayAgo, let aNow = oneDayFromNow {
+                            predicate = self.eventStore.predicateForEvents(withStart: anAgo, end: aNow, calendars: nil)
+                        }
 
-                // Create the predicate from the event store's instance method.
-                var predicate: NSPredicate? = nil
-                if let anAgo = oneDayAgo, let aNow = oneYearFromNow {
-                    predicate = self.eventStore.predicateForEvents(withStart: anAgo, end: aNow, calendars: nil)
+                        // Fetch all events that match the predicate.
+                        var events: [EKEvent]? = nil
+                        if let aPredicate = predicate {
+                            events = self.eventStore.events(matching: aPredicate)
+                            var userEvents = events?.filter { $0.calendar.allowsContentModifications}
+                            for event in userEvents ?? [] {
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateStyle = .medium
+                                dateFormatter.timeStyle = .none
+                                dateFormatter.locale = Locale(identifier: "en_US")
+                                
+                                var start = event.startDate as Date
+                                print(start as Date)
+                                print(dateFormatter.string(from: start))
+                            }
+                        }
+                    }
+                    // Create the predicate from the event store's instance method.
                 }
-
-                // Fetch all events that match the predicate.
-                var events: [EKEvent]? = nil
-                if let aPredicate = predicate {
-                    events = self.eventStore.events(matching: aPredicate)
-                }
-                print(events)
             }
         }
-
-
+    }
+}
 
 extension ViewController: UICollectionViewDataSource {
     
