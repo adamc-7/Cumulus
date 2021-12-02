@@ -113,24 +113,30 @@ class ViewController: UIViewController {
         eventStore.requestAccess(to: .event) { (granted, error) in
             if granted {
                 var calendar = Calendar.current
-//                var calendar = self.eventStore.defaultCalendarForNewEvents
-                
-                // Create the start date components
-                var rightNowComponents = DateComponents()
-                rightNowComponents.day = 0
-                var rightNow = calendar.date(byAdding: rightNowComponents, to: Date(), wrappingComponents: false)
-
-                // Create the end date components.
+////                var calendar = self.eventStore.defaultCalendarForNewEvents
+//
+//                // Create the start date components
+//                var rightNowComponents = DateComponents()
+//                rightNowComponents.day = 0
+//                var rightNow = calendar.date(byAdding: rightNowComponents, to: Date(), wrappingComponents: false)
+//
+//                // Create the end date components.
                 var oneDayFromNowComponents = DateComponents()
-                oneDayFromNowComponents.year = 1
+                oneDayFromNowComponents.day = 1
                 var oneDayFromNow = calendar.date(byAdding: oneDayFromNowComponents, to: Date(), wrappingComponents: false)
+                
+                var current: Date? = Date()
+                var end: Date? = Calendar.current.startOfDay(for: oneDayFromNow!)
+                print(current)
+                print(end)
                 var userCalendars = self.eventStore.calendars(for: .event)
+                
                 for calendar in userCalendars {
                     // https://stackoverflow.com/questions/51439574/swift-4-how-to-get-all-events-from-calendar
                     // This checking will remove Birthdays and Hollidays callendars
                     if(calendar.allowsContentModifications) {
                         var predicate: NSPredicate? = nil
-                        if let anAgo = rightNow, let aNow = oneDayFromNow {
+                        if let anAgo = current, let aNow = end {
                             predicate = self.eventStore.predicateForEvents(withStart: anAgo, end: aNow, calendars: nil)
                         }
 
