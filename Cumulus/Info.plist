@@ -3,7 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Gets events from calendar to tell users weather at event times</string>
+	<string>Cumulus wants to access your calendar events</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Cumulus wants to use your location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Cumulus wants to use your location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Cumulus wants to use your location</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

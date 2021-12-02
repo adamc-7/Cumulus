@@ -7,26 +7,29 @@
 
 import UIKit
 import EventKit
+import CoreLocation
 
 class ViewController: UIViewController {
     
     private var mainCollectionView: UICollectionView!
     private var homeButton = UIButton()
     private var settingsButton = UIButton()
-    
-    private let events: [Event] = [
-        Event(time: "9:30 AM - 10:30 AM", title: "CS 2110 Lecture", location: "Statler Hall"),
-        Event(time: "2:30 PM - 3:30 PM", title: "AppDev Design Critique", location: "Upson Hall")
+
+    private var events: [Event] = [
+//        Event(time: "9:30 AM - 10:30 AM", title: "CS 2110 Lecture", location: "Statler Hall"),
+//        Event(time: "2:30 PM - 3:30 PM", title: "AppDev Design Critique", location: "Upson Hall")
     ]
     
     private let mainCellReuseIdentifier = "mainCellReuseIdentifier"
     private let mainHeaderReuseIdentifier = "mainHeaderReuseIdentifier"
     private let mainCellPadding: CGFloat = 10
     private let mainSectionPadding: CGFloat = 5
+    var locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        locationManager.delegate = self
        // let appearance = UINavigationBarAppearance()
         //appearance.configureWithOpaqueBackground()
         //appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
@@ -63,10 +66,12 @@ class ViewController: UIViewController {
         settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
         view.addSubview(settingsButton)
        // self.modalPresentationStyle = .overFullScreen
+        getLocation()
         getEvents()
+        
         var eventsRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getEvents), userInfo: nil, repeats: true)
-
-//        requestAccess()
+        
+        var locationRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getLocation), userInfo: nil, repeats: true)
         setupConstraints()
     }
 
@@ -90,18 +95,30 @@ class ViewController: UIViewController {
         present(vc, animated: true, completion: nil)
     }
     
+    @objc func getLocation() {
+        // https://www.advancedswift.com/user-location-in-swift/
+        locationManager.requestAlwaysAuthorization()
+        var currentLoc: CLLocation!
+        if(CLLocationManager.locationServicesEnabled()) {
+           currentLoc = locationManager.location
+           print(currentLoc.coordinate.latitude)
+           print(currentLoc.coordinate.longitude)
+        }
+    }
+    
     let eventStore = EKEventStore()
 
     @objc func getEvents() {
+        // https://developer.apple.com/documentation/eventkit/retrieving_events_and_reminders
         eventStore.requestAccess(to: .event) { (granted, error) in
             if granted {
                 var calendar = Calendar.current
 //                var calendar = self.eventStore.defaultCalendarForNewEvents
                 
                 // Create the start date components
-                var oneDayAgoComponents = DateComponents()
-                oneDayAgoComponents.day = -1
-                var oneDayAgo = calendar.date(byAdding: oneDayAgoComponents, to: Date(), wrappingComponents: false)
+                var rightNowComponents = DateComponents()
+                rightNowComponents.day = 0
+                var rightNow = calendar.date(byAdding: rightNowComponents, to: Date(), wrappingComponents: false)
 
                 // Create the end date components.
                 var oneDayFromNowComponents = DateComponents()
@@ -109,27 +126,51 @@ class ViewController: UIViewController {
                 var oneDayFromNow = calendar.date(byAdding: oneDayFromNowComponents, to: Date(), wrappingComponents: false)
                 var userCalendars = self.eventStore.calendars(for: .event)
                 for calendar in userCalendars {
+                    // https://stackoverflow.com/questions/51439574/swift-4-how-to-get-all-events-from-calendar
                     // This checking will remove Birthdays and Hollidays callendars
                     if(calendar.allowsContentModifications) {
                         var predicate: NSPredicate? = nil
-                        if let anAgo = oneDayAgo, let aNow = oneDayFromNow {
+                        if let anAgo = rightNow, let aNow = oneDayFromNow {
                             predicate = self.eventStore.predicateForEvents(withStart: anAgo, end: aNow, calendars: nil)
                         }
 
                         // Fetch all events that match the predicate.
-                        var events: [EKEvent]? = nil
+                        var allEvents: [EKEvent]? = nil
                         if let aPredicate = predicate {
-                            events = self.eventStore.events(matching: aPredicate)
-                            var userEvents = events?.filter { $0.calendar.allowsContentModifications}
+                            allEvents = self.eventStore.events(matching: aPredicate)
+                            var userEvents = allEvents?.filter { $0.calendar.allowsContentModifications}
+                            self.events = []
                             for event in userEvents ?? [] {
                                 let dateFormatter = DateFormatter()
                                 dateFormatter.dateStyle = .medium
                                 dateFormatter.timeStyle = .none
                                 dateFormatter.locale = Locale(identifier: "en_US")
+                                dateFormatter.dateFormat = "h:mm a"
                                 
                                 var start = event.startDate as Date
-                                print(start as Date)
-                                print(dateFormatter.string(from: start))
+                                var unixStart = start.timeIntervalSince1970
+                                var formattedStart = dateFormatter.string(from: start)
+                                
+                                var end = event.endDate as Date
+                                var unixEnd = start.timeIntervalSince1970
+                                var formattedEnd = dateFormatter.string(from: end)
+                                
+                                var formattedTime = formattedStart + " - " + formattedEnd
+                                
+                                print(formattedTime)
+                                
+                                var title = event.title as String
+                                
+                                print(title)
+                                
+                                var location = (event.location ?? "") as String
+                                
+                                print(location)
+                                self.events.append(Event(time: formattedTime, title: title, location: location))
+                            }
+                            
+                            DispatchQueue.main.async {
+                                self.mainCollectionView.reloadData()
                             }
                         }
                     }
@@ -163,8 +204,19 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
         return CGSize(width: 327, height: 125)
         
     }
+}
+
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+        }
+    }
     
-    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        
+    }
 }
 
     
