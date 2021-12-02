@@ -7,7 +7,7 @@ import hashlib
 db = SQLAlchemy()
 
 # many users and many times
-# many users and one zipcode
+# many users and one location
 
 association_table = db.Table(
     "association",
@@ -24,7 +24,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
-    zipcode_id = db.Column(db.Integer, db.ForeignKey("zipcodes.id"), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey("locations.id"), nullable=False)
     times = db.relationship("Times", secondary=association_table, back_populates="users")
     session_token = db.Column(db.String, nullable=False, unique=True)
     update_token = db.Column(db.String, nullable=False, unique=True)
@@ -33,7 +33,7 @@ class Users(db.Model):
     def __init__(self, **kwargs):
         self.username=kwargs.get("username")
         self.password=bcrypt.hashpw(kwargs.get("password").encode("utf8"), bcrypt.gensalt(rounds=13))
-        self.zipcode_id=kwargs.get("zipcode_id")
+        self.location_id=kwargs.get("location_id")
         self.renew_session()
 
     def _urlsafe_base_64(self):
@@ -58,17 +58,21 @@ class Users(db.Model):
         }
 
     def subserialize(self):
+        loc = Locations.query.filter_by(id=self.location_id).first()
         return{
             "id": self.id,
             "username": self.username,
-            "zipcode": Zipcodes.query.filter_by(id=self.zipcode_id).first().number
-        }
+            "lat":loc.lat,
+            "long":loc.long
+                    }
     
     def serialize(self):
+        loc = Locations.query.filter_by(id=self.location_id).first()
         return{
             "id": self.id,
             "username": self.username,
-            "zipcode": Zipcodes.query.filter_by(id=self.zipcode_id).first().number,
+            "lat":loc.lat,
+            "long":loc.long,
             "times": [t.subserialize() for t in self.times]
         }
 
@@ -96,29 +100,33 @@ class Times(db.Model):
         }
 
 
-class Zipcodes(db.Model):
-    __tablename__ = "zipcodes"
+class Locations(db.Model):
+    __tablename__ = "locations"
     id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.String, nullable=False)
+    long = db.Column(db.String, nullable=False)
+    lat = db.Column(db.String, nullable=False)
     country_code = db.Column(db.String, nullable=False)
     users = db.relationship("Users")
 
     def __init__(self, **kwargs):
-        self.number=kwargs.get("number")
+        self.long=kwargs.get("long")
+        self.lat=kwargs.get("lat")
         self.country_code=kwargs.get("country_code")
 
 
     def subserialize(self):
         return{
             "id": self.id,
-            "number": self.number,
+            "long": self.long,
+            "lat": self.lat,
             "country_code": self.country_code
         }
     
     def serialize(self):
         return{
             "id": self.id,
-            "number": self.number,
+            "long": self.long,
+            "lat": self.lat,
             "country_code": self.country_code,
             "users": [t.subsubserialize() for t in self.users]
         }

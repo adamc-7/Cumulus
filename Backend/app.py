@@ -3,7 +3,7 @@ from operator import ne
 from db import db
 from db import Users
 from db import Times
-from db import Zipcodes
+from db import Locations
 from flask import Flask
 from flask import request
 import requests
@@ -47,7 +47,7 @@ def extract_token(request):
     return bearer_token
 
 
-#gets weather for a specific user with a specific zipcode for the day
+#gets weather for a specific user with a specific location for the day
 @app.route("/api/users/weather/daily/")
 def get_daily_weather():
     
@@ -56,39 +56,34 @@ def get_daily_weather():
     if not verify_session(session_token=session_token):
         return failure_response("incorrect token", 401)
     user = Users.query.filter_by(session_token=session_token).first()
-    zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
+    location = Locations.query.filter_by(id=user.location_id).first()
 
-
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
-
-    response = requests.get(url).json()
-    if 'message' in response and response['message'] == 'city not found':
-        return failure_response('Invalid zipcode or country code')
-    lon = response['coord']['lon']
-    lat = response['coord']['lat']
-
+    lon = location.long
+    lat = location.lat
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,hourly,alerts&appid={api_key}"
-    response1 = requests.get(url1).json()
+    response = requests.get(url1).json()
 
+    if 'message' in response and response['message'] == 'city not found':
+        return failure_response('Invalid location or country code')
 
     final_response = {}
-    temp_morn = response1['daily'][1]['temp']['morn']
+    temp_morn = response['daily'][1]['temp']['morn']
     temp_morn = math.floor((temp_morn * 1.8) - 459.67)
-    temp_day = response1['daily'][1]['temp']['day']
+    temp_day = response['daily'][1]['temp']['day']
     temp_day = math.floor((temp_day * 1.8) - 459.67)
-    temp_eve = response1['daily'][1]['temp']['eve']
+    temp_eve = response['daily'][1]['temp']['eve']
     temp_eve = math.floor((temp_eve * 1.8) - 459.67)
-    temp_night= response1['daily'][1]['temp']['night']
+    temp_night= response['daily'][1]['temp']['night']
     temp_night = math.floor((temp_night * 1.8) - 459.67)
-    pop = response1['daily'][1]['pop']
+    pop = response['daily'][1]['pop']
     rain_possible = pops(pop)
-    if 'rain' in response1['daily'][1]:
-        rain_amount = response1['daily'][1]['rain']
+    if 'rain' in response['daily'][1]:
+        rain_amount = response['daily'][1]['rain']
     else:
         rain_amount = None
-    if 'snow' in response1['daily'][1]:
-        snow_amount = response1['daily'][1]['snow']
+    if 'snow' in response['daily'][1]:
+        snow_amount = response['daily'][1]['snow']
     else:
         snow_amount = None
     final_response['Morning Temp'] = temp_morn
@@ -113,18 +108,15 @@ def get_hourly_weather():
         return failure_response("incorrect token", 401)
 
     user = Users.query.filter_by(session_token=session_token).first()
-    zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
+    location = Locations.query.filter_by(id=user.location_id).first()
 
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
-
-    response = requests.get(url).json()
-    if response['message'] == 'city not found':
-        return failure_response('Invalid zipcode or country code')
-    lon = response['coord']['lon']
-    lat = response['coord']['lat']
+    lon = location.long
+    lat = location.lat
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
-    response1 = requests.get(url1).json()
+    response = requests.get(url1).json()
+    if 'message' in response and response['message'] == 'city not found':
+        return failure_response('Invalid location or country code')
 
     final_response = {}
 
@@ -135,7 +127,7 @@ def get_hourly_weather():
     for time in user.times:
         user_times.append(time.time)
         
-    for time in response1['hourly']:
+    for time in response['hourly']:
         if time['dt'] in user_times:
             final_response[time['dt']]=format_hourly_weather(time)
     return success_response(final_response)
@@ -185,33 +177,29 @@ def get_current_hour_weather():
     if not verify_session(session_token=session_token):
         return failure_response("incorrect token", 401)
     user = Users.query.filter_by(session_token=session_token).first()
-    zipcode = Zipcodes.query.filter_by(id=user.zipcode_id).first()
+    location = Locations.query.filter_by(id=user.location_id).first()
 
-    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zipcode.number},{zipcode.country_code}&appid={api_key}"
-
-    response = requests.get(url).json()
-    if response['message'] == 'city not found':
-        return failure_response('Invalid zipcode or country code')
-    lon = response['coord']['lon']
-    lat = response['coord']['lat']
+    lon = location.long
+    lat = location.lat
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
-    response1 = requests.get(url1).json()
-     
+    response = requests.get(url1).json()
+    if 'message' in response and response['message'] == 'city not found':
+        return failure_response('Invalid location or country code')
 
     finalresponse = {}
-    temp = response1['hourly'][1]['temp']
+    temp = response['hourly'][1]['temp']
     temp = math.floor((temp * 1.8) - 459.67)
     
-    pop = response1['hourly'][1]['pop']
+    pop = response['hourly'][1]['pop']
     rain_possible=pops(pop)
      
-    if 'rain' in response1['hourly'][1]:
-        rain_amount = response1['hourly'][1]['rain']['1h']
+    if 'rain' in response['hourly'][1]:
+        rain_amount = response['hourly'][1]['rain']['1h']
     else:
         rain_amount = None
-    if 'snow' in response1['hourly'][1]:
-        snow_amount = response1['hourly'][1]['snow']['1h']
+    if 'snow' in response['hourly'][1]:
+        snow_amount = response['hourly'][1]['snow']['1h']
     else:
         snow_amount = None
      
@@ -233,32 +221,33 @@ def get_users():
     return success_response({"users": [t.serialize() for t in Users.query.all()]})
 
 
-@app.route("/api/zipcodes/")
-def get_zipcodes():
-    return success_response({"zipcodes": [t.serialize() for t in Zipcodes.query.all()]})
+@app.route("/api/locations/")
+def get_locations():
+    return success_response({"locations": [t.serialize() for t in Locations.query.all()]})
 
-#post contains username,password,zipcode
+#post contains username,password,location
 @app.route("/api/users/", methods=["POST"])
 def create_user():
     body = json.loads(request.data)
     username=body.get("username")
     password=body.get("password")
-    zipcode=str(body.get("zipcode"))
+    lat=body.get("lat")
+    long=body.get("long")
     country_code = body.get("country_code", "US")
     if not username:
         return failure_response("Username is required", 400)
     if not password:
         return failure_response("Password is required", 400)
-    if not zipcode:
-        return failure_response("Zipcode is required", 400)
-    if Zipcodes.query.filter_by(number=zipcode).first() is None:
-        new_zipcode=Zipcodes(number=zipcode, country_code=country_code)
-        db.session.add(new_zipcode)
+    if not lat or not long:
+        return failure_response("Location is required", 400)
+    if Locations.query.filter_by(lat=lat, long=long).first() is None:
+        new_location=Locations(long=long, lat=lat, country_code=country_code)
+        db.session.add(new_location)
         db.session.commit()
     if Users.query.filter_by(username=username).first() is not None:
         return failure_response("user already exists")
-    zipcode_id=Zipcodes.query.filter_by(number=zipcode).first().id
-    new_user = Users(username=username, password=password, zipcode_id=zipcode_id)
+    location_id=Locations.query.filter_by(lat=lat, long=long).first().id
+    new_user = Users(username=username, password=password, location_id=location_id)
     db.session.add(new_user)
     db.session.commit()
 
@@ -340,8 +329,8 @@ def delete_user():
 
   
 
-@app.route("/api/zipcode/", methods=["POST"])
-def change_zipcode():
+@app.route("/api/location/", methods=["POST"])
+def change_location():
     
     session_token = extract_token(request)
     if not verify_session(session_token=session_token):
@@ -351,13 +340,14 @@ def change_zipcode():
     if user is None:
         return failure_response("user does not exist")
     body = json.loads(request.data)
-    zipcode = str(body.get("zipcode"))
+    long = str(body.get("long"))
+    lat = str(body.get("lat"))
     country_code = str(body.get("country_code", "US"))
-    if Zipcodes.query.filter_by(number=zipcode).first() is None:
-        new_zipcode=Zipcodes(number=zipcode, country_code=country_code)
-        db.session.add(new_zipcode)
-    zipcode_id = Zipcodes.query.filter_by(number=zipcode).first().id
-    user.zipcode_id=zipcode_id
+    if Locations.query.filter_by(long=long, lat=lat).first() is None:
+        new_location=Locations(long=long, lat=lat, country_code=country_code)
+        db.session.add(new_location)
+    location_id = Locations.query.filter_by(long=long, lat=lat).first().id
+    user.location_id=location_id
     db.session.commit()
     return success_response(user.serialize())
 
