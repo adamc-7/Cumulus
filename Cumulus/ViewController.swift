@@ -45,7 +45,7 @@ class ViewController: UIViewController {
 //                print(user)
 //            }
 //        }
-        
+        locationManager.requestAlwaysAuthorization()
         
         var snowImage = UIImageView()
         snowImage.image = UIImage(named: "snowy")
@@ -73,7 +73,7 @@ class ViewController: UIViewController {
         //navigationController?.navigationBar.standardAppearance = appearance
         //navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
         //title = "Events"
-        view.backgroundColor = .white
+        //view.backgroundColor = .white
         
         
         let mainLayout = UICollectionViewFlowLayout()
@@ -122,7 +122,7 @@ class ViewController: UIViewController {
        // self.modalPresentationStyle = .overFullScreen
         getNoficationAccess()
 //        createTestNotification()
-        getLocation()
+        //getLocation()
         getEvents()
         setUpNotifications()
         
@@ -179,7 +179,7 @@ class ViewController: UIViewController {
     
     @objc func getLocation() {
         // https://www.advancedswift.com/user-location-in-swift/
-        locationManager.requestAlwaysAuthorization()
+        
         var currentLoc: CLLocation!
         if(CLLocationManager.locationServicesEnabled()) {
            currentLoc = locationManager.location
