@@ -13,6 +13,7 @@
 		ED81EDAE27595DE8000CC89B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDAD27595DE8000CC89B /* NetworkManager.swift */; };
 		ED81EDB02759615C000CC89B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDAF2759615C000CC89B /* User.swift */; };
 		ED81EDB4275AB1BE000CC89B /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */; };
+		ED81EDB8275ABB0B000CC89B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDB7275ABB0B000CC89B /* MainViewController.swift */; };
 		EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */; };
 		EDA88F43274B221F00D84AB7 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F42274B221F00D84AB7 /* Event.swift */; };
 		EDB2694227483925009070F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2694127483925009070F4 /* AppDelegate.swift */; };
@@ -57,6 +58,7 @@
 		ED81EDAD27595DE8000CC89B /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		ED81EDAF2759615C000CC89B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		ED81EDB7275ABB0B000CC89B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		EDA88F42274B221F00D84AB7 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		EDB2693E27483925009070F4 /* Cumulus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cumulus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,6 +166,7 @@
 				ED81EDAD27595DE8000CC89B /* NetworkManager.swift */,
 				ED81EDAF2759615C000CC89B /* User.swift */,
 				ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */,
+				ED81EDB7275ABB0B000CC89B /* MainViewController.swift */,
 			);
 			path = Cumulus;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED81EDB4275AB1BE000CC89B /* SignUpViewController.swift in Sources */,
+				ED81EDB8275ABB0B000CC89B /* MainViewController.swift in Sources */,
 				EDB2694627483925009070F4 /* ViewController.swift in Sources */,
 				EDB2694227483925009070F4 /* AppDelegate.swift in Sources */,
 				EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */,

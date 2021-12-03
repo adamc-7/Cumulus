@@ -22,3 +22,9 @@ class UserResponse: Codable {
     let lon: Double
     let times: [Int]
 }
+
+class createdUserResponse: Codable {
+    let session_token: String
+    let session_expiration: String
+    let update_token: String
+}

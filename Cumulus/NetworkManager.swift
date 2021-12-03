@@ -30,7 +30,7 @@ class NetworkManager {
         }
     }
     
-    static func createUser(username: String, password: String, lat: Double, lon: Double, country_code: String, completion: @escaping (User) -> Void) {
+    static func createUser(username: String, password: String, lat: Double, lon: Double, country_code: String, completion: @escaping (createdUserResponse) -> Void) {
         let parameters: [String: Any] = [
             "username": username,
             "password": password,
@@ -43,7 +43,7 @@ class NetworkManager {
             switch response.result {
             case .success(let data):
                 let jsonDecoder = JSONDecoder()
-                if let userResponse = try? jsonDecoder.decode(User.self, from: data) {
+                if let userResponse = try? jsonDecoder.decode(createdUserResponse.self, from: data) {
                     let user = userResponse
                     completion(user)
                 }

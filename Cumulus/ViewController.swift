@@ -40,7 +40,7 @@ class ViewController: UIViewController {
 //            print("working")
 //            print(users)
 //        }
-//        NetworkManager.createUser(username: "test3", password: "testpassword", lat: 10, lon: 10, country_code: "US") { user in
+//        NetworkManager.createUser(username: "test4", password: "testpassword", lat: 10, lon: 10, country_code: "US") { user in
 //            DispatchQueue.main.async {
 //                print(user)
 //            }
