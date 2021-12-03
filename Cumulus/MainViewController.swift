@@ -13,14 +13,22 @@ class MainViewController: UIViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        if(UserDefaults.standard.string(forKey: "isLoggedIn") == nil) {
-                let vc = ViewController()
-                
-//                vc.navigationController?.isNavigationBarHidden = false
-                navigationController?.pushViewController(vc, animated: true)
+        var vc: UIViewController
+        if(UserDefaults.standard.bool(forKey: "isLoggedIn") == nil) {
+            vc = SignUpViewController()
         }
         
+        else if(UserDefaults.standard.bool(forKey: "isLoggedIn") == false) {
+            vc = SignUpViewController()
+        }
         
+        else {
+            vc = SignUpViewController()
+        }
+        
+        vc.navigationController?.isNavigationBarHidden = false
+        vc.navigationItem.setHidesBackButton(true, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
 
         // Do any additional setup after loading the view.
     }

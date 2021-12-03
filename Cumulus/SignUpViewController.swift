@@ -37,6 +37,8 @@ class SignUpViewController: UIViewController {
         signButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(signButton)
         
+        signButton.addTarget(self, action: #selector(signButtonPressed), for: .touchUpInside)
+        
         logButton.setTitle("Log In", for: .normal)
         logButton.backgroundColor = .lightGray
         logButton.layer.cornerRadius = 15
@@ -47,6 +49,9 @@ class SignUpViewController: UIViewController {
         
     }
     
+    @objc func signButtonPressed() {
+        
+    }
     func setUpConstraints() {
         NSLayoutConstraint.activate([
             logButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
