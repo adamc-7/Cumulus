@@ -50,12 +50,45 @@ class SignUpViewController: UIViewController {
         logButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logButton)
         
+        logButton.addTarget(self, action: #selector(logButtonPressed), for: .touchUpInside)
+        
         setUpConstraints()
         
     }
     
     @objc func signButtonPressed() {
+        print(nameField.text)
+        print(password.text)
+        NetworkManager.createUser(username: nameField.text ?? "", password: password.text ?? "", lat: 10, lon: 10, country_code: "US") { user in
+            DispatchQueue.main.async {
+                print(user.session_token)
+                UserDefaults.standard.set(user.session_token, forKey: "session_token")
+            }
+        }
+        UserDefaults.standard.set(true, forKey: "isLoggedIn")
+
+        let vc = ViewController()
         
+        vc.navigationController?.isNavigationBarHidden = false
+        vc.navigationItem.setHidesBackButton(true, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc func logButtonPressed() {
+        print(nameField.text)
+        print(password.text)
+        NetworkManager.loginUser(username: nameField.text ?? "", password: password.text ?? "") { user in
+//            UserDefaults.standard.set(self.nameField.text, forKey: "username")
+            UserDefaults.standard.set(user.session_token, forKey: "session_token")
+            print(UserDefaults.standard.string(forKey: "session_token"))
+        }
+        UserDefaults.standard.set(true, forKey: "isLoggedIn")
+
+        let vc = ViewController()
+        
+        vc.navigationController?.isNavigationBarHidden = false
+        vc.navigationItem.setHidesBackButton(true, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
     func setUpConstraints() {
         NSLayoutConstraint.activate([

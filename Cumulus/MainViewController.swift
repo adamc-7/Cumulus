@@ -23,7 +23,7 @@ class MainViewController: UIViewController {
         }
         
         else {
-            vc = SignUpViewController()
+            vc = ViewController()
         }
         
         vc.navigationController?.isNavigationBarHidden = false

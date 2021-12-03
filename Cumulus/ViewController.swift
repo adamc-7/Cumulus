@@ -40,13 +40,16 @@ class ViewController: UIViewController {
 //            print("working")
 //            print(users)
 //        }
-//        NetworkManager.createUser(username: "test4", password: "testpassword", lat: 10, lon: 10, country_code: "US") { user in
+//        NetworkManager.createUser(username: "test5", password: "testpassword", lat: 10, lon: 10, country_code: "US") { user in
 //            DispatchQueue.main.async {
-//                print(user)
+//                print(user.session_token)
 //            }
 //        }
-        
-        
+        print(UserDefaults.standard.string(forKey: "session_token"))
+        NetworkManager.getWeather(token: UserDefaults.standard.string(forKey: "session_token") ?? "") { weather in
+            print("hello")
+            print(weather)
+        }
         var snowImage = UIImageView()
         snowImage.image = UIImage(named: "snowy")
         snowImage.clipsToBounds = true
@@ -62,9 +65,9 @@ class ViewController: UIViewController {
         let appearance = UINavigationBarAppearance()
          appearance.configureWithTransparentBackground()
          appearance.titleTextAttributes = [.foregroundColor: darkBlue]
-         navigationController?.navigationBar.standardAppearance = appearance
-         navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
-        navigationController?.navigationBar.topItem?.rightBarButtonItem = settingsButton
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+         navigationController?.navigationBar.topItem?.rightBarButtonItem = settingsButton
         
         locationManager.delegate = self
        // let appearance = UINavigationBarAppearance()

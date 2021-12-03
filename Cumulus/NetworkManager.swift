@@ -52,4 +52,42 @@ class NetworkManager {
             }
         }
     }
+    
+    static func loginUser(username: String, password: String, completion: @escaping (createdUserResponse) -> Void) {
+        let parameters: [String: Any] = [
+            "username": username,
+            "password": password
+        ]
+        
+        AF.request("\(endpoint)/api/login/", method: .post, parameters: parameters,  encoding: JSONEncoding.default).validate().responseData { response in
+            switch response.result {
+            case .success(let data):
+                let jsonDecoder = JSONDecoder()
+                if let userResponse = try? jsonDecoder.decode(createdUserResponse.self, from: data) {
+                    let user = userResponse
+                    completion(user)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    static func getWeather(token: String, completion: @escaping (Weather) -> Void) {
+        let headers: HTTPHeaders = ["Authorization": token, "Content-Type": "application/json"]
+        AF.request("\(endpoint)/api/users/weather/current",  method: .get, headers: headers).validate().responseData {
+            response in
+            switch response.result {
+            case .success(let data):
+                let jsonDecoder = JSONDecoder()
+                if let weatherResponse = try? jsonDecoder.decode(Weather.self, from: data) {
+                    print("hello")
+                    let weather = weatherResponse
+                    completion(weather)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
 }
