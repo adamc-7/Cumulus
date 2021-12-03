@@ -12,6 +12,7 @@
 		E630CF6465062600ECA8176E /* Pods_Cumulus_CumulusUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BED26C99CE4F63A24DEA165 /* Pods_Cumulus_CumulusUITests.framework */; };
 		ED81EDAE27595DE8000CC89B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDAD27595DE8000CC89B /* NetworkManager.swift */; };
 		ED81EDB02759615C000CC89B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDAF2759615C000CC89B /* User.swift */; };
+		ED81EDB4275AB1BE000CC89B /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */; };
 		EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */; };
 		EDA88F43274B221F00D84AB7 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F42274B221F00D84AB7 /* Event.swift */; };
 		EDB2694227483925009070F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2694127483925009070F4 /* AppDelegate.swift */; };
@@ -55,6 +56,7 @@
 		C95CD54BC8A2EEC0910BA8E3 /* Pods-CumulusTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CumulusTests.debug.xcconfig"; path = "Target Support Files/Pods-CumulusTests/Pods-CumulusTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED81EDAD27595DE8000CC89B /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		ED81EDAF2759615C000CC89B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		EDA88F42274B221F00D84AB7 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		EDB2693E27483925009070F4 /* Cumulus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cumulus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,6 +163,7 @@
 				EDE4E38527580EF60010BF03 /* Calendar.swift */,
 				ED81EDAD27595DE8000CC89B /* NetworkManager.swift */,
 				ED81EDAF2759615C000CC89B /* User.swift */,
+				ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */,
 			);
 			path = Cumulus;
 			sourceTree = "<group>";
@@ -420,6 +423,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED81EDB4275AB1BE000CC89B /* SignUpViewController.swift in Sources */,
 				EDB2694627483925009070F4 /* ViewController.swift in Sources */,
 				EDB2694227483925009070F4 /* AppDelegate.swift in Sources */,
 				EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */,

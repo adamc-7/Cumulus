@@ -14,8 +14,13 @@ class ViewController: UIViewController {
     
     private var mainCollectionView: UICollectionView!
     private var homeButton = UIButton()
-    private var settingsButton = UIButton()
-
+    private var settingsImage = UIImage(named: "SettingsImage")?.withRenderingMode(.alwaysTemplate)
+    private var eventsLabel = UILabel()
+    let darkBlue = UIColor(red: 0.073, green: 0.107, blue: 0.183, alpha: 1)
+    var welcomeLabel = UILabel()
+    var descriptionImage = UIImageView()
+    var descriptionLabel = UILabel()
+    var tempLabel = UILabel()
     private var events: [Event] = [
 //        Event(time: "9:30 AM - 10:30 AM", title: "CS 2110 Lecture", location: "Statler Hall"),
 //        Event(time: "2:30 PM - 3:30 PM", title: "AppDev Design Critique", location: "Upson Hall")
@@ -40,6 +45,27 @@ class ViewController: UIViewController {
 //                print(user)
 //            }
 //        }
+        
+        
+        var snowImage = UIImageView()
+        snowImage.image = UIImage(named: "snowy")
+        snowImage.clipsToBounds = true
+        snowImage.contentMode = .scaleToFill
+        snowImage.center = view.center
+        snowImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.sendSubviewToBack(snowImage)
+        
+        
+        let settingsButton = UIBarButtonItem(image: settingsImage , style: .plain, target: self, action: #selector(pushViewControllerButtonPressed))
+        
+        let appearance = UINavigationBarAppearance()
+         appearance.configureWithTransparentBackground()
+         appearance.titleTextAttributes = [.foregroundColor: darkBlue]
+         navigationController?.navigationBar.standardAppearance = appearance
+         navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = settingsButton
+        
         locationManager.delegate = self
        // let appearance = UINavigationBarAppearance()
         //appearance.configureWithOpaqueBackground()
@@ -55,59 +81,100 @@ class ViewController: UIViewController {
         mainLayout.minimumInteritemSpacing = mainCellPadding
         mainLayout.scrollDirection = .vertical
         mainLayout.sectionInset = UIEdgeInsets(top: mainSectionPadding, left: 0, bottom: mainSectionPadding, right: 0)
+        //SET TIME
+        welcomeLabel.text = "Good Afternoon,  Daniel"
+        welcomeLabel.font = UIFont(name: "Comfortaa-Bold", size: 36)
+        welcomeLabel.font = .systemFont(ofSize: 36)
+        welcomeLabel.numberOfLines = 0
+        welcomeLabel.lineBreakMode = .byWordWrapping
+        welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(welcomeLabel)
         
         mainCollectionView = UICollectionView(frame: .zero, collectionViewLayout: mainLayout)
         mainCollectionView.translatesAutoresizingMaskIntoConstraints = false
         mainCollectionView.backgroundColor = .clear
-        
         mainCollectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: mainCellReuseIdentifier)
-        
         mainCollectionView.dataSource = self
-        
         mainCollectionView.delegate = self
-        
-        
         view.addSubview(mainCollectionView)
         
-        settingsButton.translatesAutoresizingMaskIntoConstraints = false
-        settingsButton.setTitle("Settings", for: .normal)
-        settingsButton.setTitleColor(.white, for: .normal)
-        settingsButton.backgroundColor = UIColor(red: 56/255, green: 61/255, blue: 68/255, alpha: 1)
-        settingsButton.layer.cornerRadius = 4
-        settingsButton.addTarget(self, action: #selector(presentViewControllerButtonPressed), for: .touchUpInside)
-        view.addSubview(settingsButton)
+        eventsLabel.text = "You have \(events.count) events left today."
+        eventsLabel.font = UIFont(name: "Roboto", size: 15)
+        eventsLabel.textColor = darkBlue
+        eventsLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(eventsLabel)
+        
+        descriptionImage.image = UIImage(named: "Clouds")
+        descriptionImage.clipsToBounds = true
+        descriptionImage.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(descriptionImage)
+        
+        descriptionLabel.text = "Drizzling"
+        descriptionLabel.font = UIFont(name: "Roboto-Regular", size: 18)
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(descriptionLabel)
+        
+        tempLabel.text = "36°F"
+        tempLabel.font = UIFont(name: "Comfortaa-Bold", size: 50)
+        tempLabel.font = .systemFont(ofSize: 50)
+        tempLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(tempLabel)
        // self.modalPresentationStyle = .overFullScreen
         getNoficationAccess()
-        createTestNotification()
+//        createTestNotification()
         getLocation()
         getEvents()
+        setUpNotifications()
         
         var eventsRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getEvents), userInfo: nil, repeats: true)
         
         var locationRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getLocation), userInfo: nil, repeats: true)
         
-//        var notificationTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(setUpNotifications), userInfo: nil, repeats: true)
+        var notificationTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(setUpNotifications), userInfo: nil, repeats: true)
         setupConstraints()
     }
 
     
     func setupConstraints() {
         let collectionViewPadding: CGFloat = 12
+        
+        
         NSLayoutConstraint.activate([
-            mainCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: collectionViewPadding),
+            mainCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 416),
             mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: collectionViewPadding),
             mainCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -collectionViewPadding),
             mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -collectionViewPadding)
         ])
         
         NSLayoutConstraint.activate([
-            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            settingsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 331)
+            eventsLabel.topAnchor.constraint(equalTo: mainCollectionView.topAnchor, constant: -30),
+            eventsLabel.leadingAnchor.constraint(equalTo: mainCollectionView.leadingAnchor, constant: 12)
+        ])
+        
+        NSLayoutConstraint.activate([
+            welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
+            welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+        NSLayoutConstraint.activate([
+            descriptionImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            descriptionImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 230)
+        ])
+        
+        NSLayoutConstraint.activate([
+            descriptionLabel.leadingAnchor.constraint(equalTo: descriptionImage.trailingAnchor, constant: 10),
+            descriptionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 235)
+        ])
+
+        NSLayoutConstraint.activate([
+            tempLabel.leadingAnchor.constraint(equalTo: descriptionImage.leadingAnchor),
+            tempLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20)
         ])
     }
-    @objc func presentViewControllerButtonPressed() {
+    @objc func pushViewControllerButtonPressed() {
         let vc = SettingsViewController()
-        present(vc, animated: true, completion: nil)
+        
+        vc.navigationController?.isNavigationBarHidden = false
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func getLocation() {
@@ -138,7 +205,8 @@ class ViewController: UIViewController {
         content.title = "Test Notification"
         content.body = "testing"
         
-        let date = Date(timeIntervalSinceNow: 10)
+//        let date = Date(timeIntervalSinceNow: 10)
+        let date = Date(timeIntervalSince1970: TimeInterval(1638559400))
         let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         
 //        let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
@@ -177,6 +245,35 @@ class ViewController: UIViewController {
                     if(scheduledNotification == false /*and weather bad at hour*/) {
                         //schedule notification
                         scheduledNotification = true
+                        userNotificationCenter.delegate = self
+                        let content = UNMutableNotificationContent()
+                        content.title = "Test Notification"
+                        content.body = "testing"
+                        
+                        let date = Date(timeIntervalSince1970: TimeInterval(timePair[0]) - 3600)
+                        let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+                        
+                //        let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+                //        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5,
+                //                                                        repeats: false)
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
+                        
+                        let identifier = "UYLLocalNotification"
+                        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+                        userNotificationCenter.add(request, withCompletionHandler: { (error) in
+                            if let error = error {
+                                print(error)
+                                // Something went wrong
+                            }
+                        })
+                        
+                        userNotificationCenter.getPendingNotificationRequests(completionHandler: { requests in
+                            for request in requests {
+                                print(Date())
+                                print(request)
+                            }
+                        })
                     }
                     
                 }
