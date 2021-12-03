@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36C6D71D3E2FE55538178F00 /* Pods_CumulusTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C57F3B9320F5B22E154884B4 /* Pods_CumulusTests.framework */; };
+		54DC6FC13841350D3E856EC1 /* Pods_Cumulus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C1DB7F5353C02CD99D8E4D9 /* Pods_Cumulus.framework */; };
+		E630CF6465062600ECA8176E /* Pods_Cumulus_CumulusUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BED26C99CE4F63A24DEA165 /* Pods_Cumulus_CumulusUITests.framework */; };
+		ED81EDAE27595DE8000CC89B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDAD27595DE8000CC89B /* NetworkManager.swift */; };
+		ED81EDB02759615C000CC89B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED81EDAF2759615C000CC89B /* User.swift */; };
 		EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */; };
 		EDA88F43274B221F00D84AB7 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA88F42274B221F00D84AB7 /* Event.swift */; };
 		EDB2694227483925009070F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2694127483925009070F4 /* AppDelegate.swift */; };
@@ -39,6 +44,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C1DB7F5353C02CD99D8E4D9 /* Pods_Cumulus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cumulus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BED26C99CE4F63A24DEA165 /* Pods_Cumulus_CumulusUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Cumulus_CumulusUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F3338CDC887A29E8452ABFC /* Pods-Cumulus.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cumulus.debug.xcconfig"; path = "Target Support Files/Pods-Cumulus/Pods-Cumulus.debug.xcconfig"; sourceTree = "<group>"; };
+		7400BC7B49747BB272DFFE97 /* Pods-Cumulus-CumulusUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cumulus-CumulusUITests.debug.xcconfig"; path = "Target Support Files/Pods-Cumulus-CumulusUITests/Pods-Cumulus-CumulusUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		7A93AB853EC094C38F1EC783 /* Pods-Cumulus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cumulus.release.xcconfig"; path = "Target Support Files/Pods-Cumulus/Pods-Cumulus.release.xcconfig"; sourceTree = "<group>"; };
+		B4ACB0A0A333EF903F5EC3CE /* Pods-CumulusTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CumulusTests.release.xcconfig"; path = "Target Support Files/Pods-CumulusTests/Pods-CumulusTests.release.xcconfig"; sourceTree = "<group>"; };
+		BEEEBF1B35123601447AD573 /* Pods-Cumulus-CumulusUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Cumulus-CumulusUITests.release.xcconfig"; path = "Target Support Files/Pods-Cumulus-CumulusUITests/Pods-Cumulus-CumulusUITests.release.xcconfig"; sourceTree = "<group>"; };
+		C57F3B9320F5B22E154884B4 /* Pods_CumulusTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CumulusTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C95CD54BC8A2EEC0910BA8E3 /* Pods-CumulusTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CumulusTests.debug.xcconfig"; path = "Target Support Files/Pods-CumulusTests/Pods-CumulusTests.debug.xcconfig"; sourceTree = "<group>"; };
+		ED81EDAD27595DE8000CC89B /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		ED81EDAF2759615C000CC89B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		EDA88F42274B221F00D84AB7 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		EDB2693E27483925009070F4 /* Cumulus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cumulus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54DC6FC13841350D3E856EC1 /* Pods_Cumulus.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36C6D71D3E2FE55538178F00 /* Pods_CumulusTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,12 +94,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E630CF6465062600ECA8176E /* Pods_Cumulus_CumulusUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F2C1105E82B0EEDFE6D621E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6F3338CDC887A29E8452ABFC /* Pods-Cumulus.debug.xcconfig */,
+				7A93AB853EC094C38F1EC783 /* Pods-Cumulus.release.xcconfig */,
+				7400BC7B49747BB272DFFE97 /* Pods-Cumulus-CumulusUITests.debug.xcconfig */,
+				BEEEBF1B35123601447AD573 /* Pods-Cumulus-CumulusUITests.release.xcconfig */,
+				C95CD54BC8A2EEC0910BA8E3 /* Pods-CumulusTests.debug.xcconfig */,
+				B4ACB0A0A333EF903F5EC3CE /* Pods-CumulusTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		E77584DAB935290883B16890 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3C1DB7F5353C02CD99D8E4D9 /* Pods_Cumulus.framework */,
+				6BED26C99CE4F63A24DEA165 /* Pods_Cumulus_CumulusUITests.framework */,
+				C57F3B9320F5B22E154884B4 /* Pods_CumulusTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EDB2693527483925009070F4 = {
 			isa = PBXGroup;
 			children = (
@@ -89,6 +131,8 @@
 				EDB2695727483927009070F4 /* CumulusTests */,
 				EDB2696127483927009070F4 /* CumulusUITests */,
 				EDB2693F27483925009070F4 /* Products */,
+				8F2C1105E82B0EEDFE6D621E /* Pods */,
+				E77584DAB935290883B16890 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -115,6 +159,8 @@
 				EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */,
 				EDA88F42274B221F00D84AB7 /* Event.swift */,
 				EDE4E38527580EF60010BF03 /* Calendar.swift */,
+				ED81EDAD27595DE8000CC89B /* NetworkManager.swift */,
+				ED81EDAF2759615C000CC89B /* User.swift */,
 			);
 			path = Cumulus;
 			sourceTree = "<group>";
@@ -143,9 +189,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EDB2696827483927009070F4 /* Build configuration list for PBXNativeTarget "Cumulus" */;
 			buildPhases = (
+				F0E126F41B573286C88F17B2 /* [CP] Check Pods Manifest.lock */,
 				EDB2693A27483925009070F4 /* Sources */,
 				EDB2693B27483925009070F4 /* Frameworks */,
 				EDB2693C27483925009070F4 /* Resources */,
+				7F0C2EB19FA02D7F6356254D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -160,6 +208,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EDB2696B27483927009070F4 /* Build configuration list for PBXNativeTarget "CumulusTests" */;
 			buildPhases = (
+				181EFFBBBB3A8F896121B00F /* [CP] Check Pods Manifest.lock */,
 				EDB2695027483927009070F4 /* Sources */,
 				EDB2695127483927009070F4 /* Frameworks */,
 				EDB2695227483927009070F4 /* Resources */,
@@ -178,9 +227,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EDB2696E27483927009070F4 /* Build configuration list for PBXNativeTarget "CumulusUITests" */;
 			buildPhases = (
+				B3CC2F9334FFCE966876C4D3 /* [CP] Check Pods Manifest.lock */,
 				EDB2695A27483927009070F4 /* Sources */,
 				EDB2695B27483927009070F4 /* Frameworks */,
 				EDB2695C27483927009070F4 /* Resources */,
+				FCDA10F3584E59F5F5BB350B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,6 +312,109 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		181EFFBBBB3A8F896121B00F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CumulusTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7F0C2EB19FA02D7F6356254D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cumulus/Pods-Cumulus-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cumulus/Pods-Cumulus-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Cumulus/Pods-Cumulus-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B3CC2F9334FFCE966876C4D3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Cumulus-CumulusUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F0E126F41B573286C88F17B2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Cumulus-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FCDA10F3584E59F5F5BB350B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cumulus-CumulusUITests/Pods-Cumulus-CumulusUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Cumulus-CumulusUITests/Pods-Cumulus-CumulusUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Cumulus-CumulusUITests/Pods-Cumulus-CumulusUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		EDB2693A27483925009070F4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -270,6 +424,8 @@
 				EDB2694227483925009070F4 /* AppDelegate.swift in Sources */,
 				EDA88F41274B1E5200D84AB7 /* CollectionViewCell.swift in Sources */,
 				EDB2694427483925009070F4 /* SceneDelegate.swift in Sources */,
+				ED81EDAE27595DE8000CC89B /* NetworkManager.swift in Sources */,
+				ED81EDB02759615C000CC89B /* User.swift in Sources */,
 				EDA88F43274B221F00D84AB7 /* Event.swift in Sources */,
 				F4918CAE274B2DE700F0D8C5 /* SettingsViewController.swift in Sources */,
 				EDE4E38627580EF60010BF03 /* Calendar.swift in Sources */,
@@ -438,6 +594,7 @@
 		};
 		EDB2696927483927009070F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F3338CDC887A29E8452ABFC /* Pods-Cumulus.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -445,6 +602,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cumulus/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Cumulus wants to access your calendar events";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Cumulus wants to use your location";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Cumulus wants to use your location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cumulus wants to use your location";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = LaunchScreen;
@@ -465,6 +626,7 @@
 		};
 		EDB2696A27483927009070F4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A93AB853EC094C38F1EC783 /* Pods-Cumulus.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -472,6 +634,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Cumulus/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Cumulus wants to access your calendar events";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Cumulus wants to use your location";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Cumulus wants to use your location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cumulus wants to use your location";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = LaunchScreen;
@@ -492,6 +658,7 @@
 		};
 		EDB2696C27483927009070F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C95CD54BC8A2EEC0910BA8E3 /* Pods-CumulusTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -516,6 +683,7 @@
 		};
 		EDB2696D27483927009070F4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B4ACB0A0A333EF903F5EC3CE /* Pods-CumulusTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -540,6 +708,7 @@
 		};
 		EDB2696F27483927009070F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7400BC7B49747BB272DFFE97 /* Pods-Cumulus-CumulusUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -562,6 +731,7 @@
 		};
 		EDB2697027483927009070F4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BEEEBF1B35123601447AD573 /* Pods-Cumulus-CumulusUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
