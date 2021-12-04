@@ -7,6 +7,9 @@
 
 import UIKit
 
+// This is shown after touching settings button on the main home page. Note that functionality has not been added to buttons, and
+// that realistically there would not be a need to update the location or calendar, or have a button to send notifications
+// as this is handled automatically by the app.
 class SettingsViewController: UIViewController {
     var locationLabel = UILabel()
     var calendarLabel = UILabel()

@@ -134,9 +134,9 @@ class ViewController: UIViewController {
         
         // Does not work, but this is an example of how weather would be fetched from backend.
         // See NetworkManager for other functions that connect/attempt to connect to backend that are not currently being implemented.
-        NetworkManager.getWeather(token: UserDefaults.standard.string(forKey: "session_token")!) { weather in
-            print(weather)
-        }
+//        NetworkManager.getWeather(token: UserDefaults.standard.string(forKey: "session_token")!) { weather in
+//            print(weather)
+//        }
     }
 
     
