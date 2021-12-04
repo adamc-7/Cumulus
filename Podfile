@@ -7,6 +7,7 @@ target 'Cumulus' do
 
   # Pods for Cumulus
   pod 'Alamofire'
+  pod 'SwiftyJSON'
 
   target 'CumulusTests' do
     inherit! :search_paths

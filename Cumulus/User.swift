@@ -7,6 +7,8 @@
 
 import Foundation
 
+// these are classes that are used to store data from backend
+
 class User: Codable {
     let username: String
     let password: String
@@ -43,11 +45,4 @@ class Weather: Codable {
         case rainAmount = "Rain Amount"
         case snowAmount = "Snow Amount"
     }
-
-//    “Hourly Temp”: 68.45,
-//    “Chance of Precipitation”: 39.58,
-//    “Message”: “Likely”,
-//    “Rain Amount”: 3.4 (only prints of not zero),
-//    “Snow Amount”: 5.2 (only prints of not zero)
-
 }

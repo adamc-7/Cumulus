@@ -7,21 +7,24 @@
 
 import UIKit
 
+// this controls which screen is displayed when the app is opened depending on the user's login status
 class MainViewController: UIViewController {
     
-
-    //
     override func viewDidLoad() {
         super.viewDidLoad()
         var vc: UIViewController
+        
+        // has never logged in
         if(UserDefaults.standard.bool(forKey: "isLoggedIn") == nil) {
             vc = SignUpViewController()
         }
         
+        // is currently logged out
         else if(UserDefaults.standard.bool(forKey: "isLoggedIn") == false) {
             vc = SignUpViewController()
         }
         
+        // is currently logged in
         else {
             vc = ViewController()
         }
@@ -29,19 +32,5 @@ class MainViewController: UIViewController {
         vc.navigationController?.isNavigationBarHidden = false
         vc.navigationItem.setHidesBackButton(true, animated: false)
         navigationController?.pushViewController(vc, animated: true)
-
-        // Do any additional setup after loading the view.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

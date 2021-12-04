@@ -16,29 +16,33 @@ class CollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         contentView.layer.cornerRadius = 8
-        contentView.clipsToBounds = true
-        contentView.backgroundColor = .gray
-        
-        timeLabel.translatesAutoresizingMaskIntoConstraints = false
-        timeLabel.textColor = .black
-        timeLabel.backgroundColor = .white
+                contentView.clipsToBounds = true
+                contentView.backgroundColor = .white
+                contentView.layer.opacity = 0.6
+                timeLabel.translatesAutoresizingMaskIntoConstraints = false
+                timeLabel.textColor = .black
+                timeLabel.backgroundColor = .white
+                timeLabel.font = UIFont(name: "Roboto-Bold", size: 12)
+                timeLabel.font = .systemFont(ofSize: 12)
+                contentView.addSubview(timeLabel)
+                
+                titleLabel.translatesAutoresizingMaskIntoConstraints = false
+                titleLabel.textColor = .black
+                titleLabel.backgroundColor = .white
+                titleLabel.font = UIFont(name: "Roboto-Bold", size: 16)
+                titleLabel.font = .systemFont(ofSize: 15, weight: UIFont.Weight(rawValue: 700))
 
-        contentView.addSubview(timeLabel)
-        
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.textColor = .black
-        titleLabel.backgroundColor = .white
-
-        contentView.addSubview(titleLabel)
-        
-        locationLabel.translatesAutoresizingMaskIntoConstraints = false
-        locationLabel.textColor = .black
-        locationLabel.backgroundColor = .white
-
-        contentView.addSubview(locationLabel)
-    
-    
-        setupConstraints()
+                contentView.addSubview(titleLabel)
+                
+                locationLabel.translatesAutoresizingMaskIntoConstraints = false
+                locationLabel.textColor = .black
+                locationLabel.backgroundColor = .white
+                locationLabel.font = UIFont(name: "Roboto-Bold", size: 12)
+                locationLabel.font = .systemFont(ofSize: 12)
+                contentView.addSubview(locationLabel)
+            
+            
+                setupConstraints()
     }
     
     func configure(for event: Event) {

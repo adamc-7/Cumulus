@@ -8,11 +8,12 @@
 import Foundation
 import Alamofire
 
+// works with backend; some functions are working properly, others not
 class NetworkManager {
     
     static let endpoint = "https://cumulusrain.herokuapp.com"
     
-
+    // this was the first test at working with the backend (would not actually be used in app), had trouble decoding response
     static func getAllUsers(completion: @escaping ([UserResponse]) -> Void) {
         AF.request("\(endpoint)/api/users", method: .get).validate().responseData { response in
             switch response.result {
@@ -30,6 +31,7 @@ class NetworkManager {
         }
     }
     
+    // this works and creats a user on the backend
     static func createUser(username: String, password: String, lat: Double, lon: Double, country_code: String, completion: @escaping (createdUserResponse) -> Void) {
         let parameters: [String: Any] = [
             "username": username,
@@ -53,6 +55,7 @@ class NetworkManager {
         }
     }
     
+    // this may work, had difficulty testing if it worked
     static func loginUser(username: String, password: String, completion: @escaping (createdUserResponse) -> Void) {
         let parameters: [String: Any] = [
             "username": username,
@@ -73,8 +76,11 @@ class NetworkManager {
         }
     }
     
+    // had trouble with authorization
     static func getWeather(token: String, completion: @escaping (Weather) -> Void) {
-        let headers: HTTPHeaders = ["Authorization": token, "Content-Type": "application/json"]
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(token)", "Content-Type": "application/json"
+                ]
         AF.request("\(endpoint)/api/users/weather/current",  method: .get, headers: headers).validate().responseData {
             response in
             switch response.result {
@@ -90,4 +96,6 @@ class NetworkManager {
             }
         }
     }
+    
+    
 }

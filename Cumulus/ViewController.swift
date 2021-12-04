@@ -5,12 +5,22 @@
 //  Created by Adam Cahall on 11/19/21.
 //
 
+
 import UIKit
 import EventKit
 import CoreLocation
 import UserNotifications
 
+// this is view controller for the main home page of the app
+// *** note that there is a bug where the settings button will not be displayed on initial login to app,
+// you will see it if you relaunch the program after initially logging in ***
+
 class ViewController: UIViewController {
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
     
     private var mainCollectionView: UICollectionView!
     private var homeButton = UIButton()
@@ -21,11 +31,13 @@ class ViewController: UIViewController {
     var descriptionImage = UIImageView()
     var descriptionLabel = UILabel()
     var tempLabel = UILabel()
-    private var events: [Event] = [
-//        Event(time: "9:30 AM - 10:30 AM", title: "CS 2110 Lecture", location: "Statler Hall"),
-//        Event(time: "2:30 PM - 3:30 PM", title: "AppDev Design Critique", location: "Upson Hall")
-    ]
+    let backImage = UIImageView()
+    
+    // events stores all of the events that start anytime from right now to the end of the day
+    private var events: [Event] = []
+    // times stores the start and end time for all events that start anytime from right now to the end of the day in the form [ [startTime1, endTime1], [startTime2, endTime2], ...etc]
     private var times: [[Int]] = [[]]
+    
     private var weatherAtTimes: [Int:String] = [:]
     
     private let mainCellReuseIdentifier = "mainCellReuseIdentifier"
@@ -36,60 +48,37 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        NetworkManager.getAllUsers { users in
-//            print("working")
-//            print(users)
-//        }
-//        NetworkManager.createUser(username: "test5", password: "testpassword", lat: 10, lon: 10, country_code: "US") { user in
-//            DispatchQueue.main.async {
-//                print(user.session_token)
-//            }
-//        }
-        print(UserDefaults.standard.string(forKey: "session_token"))
-        NetworkManager.getWeather(token: UserDefaults.standard.string(forKey: "session_token") ?? "") { weather in
-            print("hello")
-            print(weather)
-        }
-        var snowImage = UIImageView()
-        snowImage.image = UIImage(named: "snowy")
-        snowImage.clipsToBounds = true
-        snowImage.contentMode = .scaleToFill
-        snowImage.center = view.center
-        snowImage.translatesAutoresizingMaskIntoConstraints = false
+
+        backImage.image = UIImage(named: "sunny")
+        backImage.contentMode = .scaleAspectFill
+        backImage.clipsToBounds = true
+        backImage.translatesAutoresizingMaskIntoConstraints = false
         
-        view.sendSubviewToBack(snowImage)
+        view.addSubview(backImage)
         
-        
-        let settingsButton = UIBarButtonItem(image: settingsImage , style: .plain, target: self, action: #selector(pushViewControllerButtonPressed))
+        let settingsButton = UIBarButtonItem(image: settingsImage , style: .plain, target: self, action: #selector(ViewController.pushViewControllerButtonPressed))
         
         let appearance = UINavigationBarAppearance()
-         appearance.configureWithTransparentBackground()
-         appearance.titleTextAttributes = [.foregroundColor: darkBlue]
+        appearance.configureWithTransparentBackground()
+        appearance.titleTextAttributes = [.foregroundColor: darkBlue]
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
-         navigationController?.navigationBar.topItem?.rightBarButtonItem = settingsButton
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = settingsButton
         
         locationManager.delegate = self
-       // let appearance = UINavigationBarAppearance()
-        //appearance.configureWithOpaqueBackground()
-        //appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
-        //navigationController?.navigationBar.standardAppearance = appearance
-        //navigationController?.navigationBar.scrollEdgeAppearance = navigationController?.navigationBar.standardAppearance
-        //title = "Events"
-        view.backgroundColor = .white
-        
         
         let mainLayout = UICollectionViewFlowLayout()
         mainLayout.minimumLineSpacing = mainCellPadding
         mainLayout.minimumInteritemSpacing = mainCellPadding
         mainLayout.scrollDirection = .vertical
         mainLayout.sectionInset = UIEdgeInsets(top: mainSectionPadding, left: 0, bottom: mainSectionPadding, right: 0)
-        //SET TIME
-        welcomeLabel.text = "Good Afternoon,  Daniel"
-        welcomeLabel.font = UIFont(name: "Comfortaa-Bold", size: 36)
-        welcomeLabel.font = .systemFont(ofSize: 36)
-        welcomeLabel.numberOfLines = 0
+
+        welcomeLabel.text = "Hi there! Let's take a look at your day."
+        welcomeLabel.textColor = .white
+        welcomeLabel.font = UIFont(name: "Comfortaa-Bold", size: 40)
+        welcomeLabel.font = .systemFont(ofSize: 40)
         welcomeLabel.lineBreakMode = .byWordWrapping
+        welcomeLabel.numberOfLines = 0
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(welcomeLabel)
         
@@ -101,9 +90,9 @@ class ViewController: UIViewController {
         mainCollectionView.delegate = self
         view.addSubview(mainCollectionView)
         
-        eventsLabel.text = "You have \(events.count) events left today."
+        eventsLabel.text = "Events for today:"
         eventsLabel.font = UIFont(name: "Roboto", size: 15)
-        eventsLabel.textColor = darkBlue
+        eventsLabel.textColor = .white
         eventsLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(eventsLabel)
         
@@ -112,67 +101,89 @@ class ViewController: UIViewController {
         descriptionImage.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(descriptionImage)
         
-        descriptionLabel.text = "Drizzling"
+        descriptionLabel.text = "Current Temperature:"
         descriptionLabel.font = UIFont(name: "Roboto-Regular", size: 18)
+        descriptionLabel.textColor = .white
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(descriptionLabel)
         
+        // placeholder for now, would show actual temperature when integrated with backend
         tempLabel.text = "36°F"
         tempLabel.font = UIFont(name: "Comfortaa-Bold", size: 50)
         tempLabel.font = .systemFont(ofSize: 50)
+        tempLabel.textColor = .white
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tempLabel)
-       // self.modalPresentationStyle = .overFullScreen
+        
+        // initial checks
         getNoficationAccess()
-//        createTestNotification()
         getLocation()
         getEvents()
         setUpNotifications()
         
+        // checks for new scheduled events every 20 seconds and updates events array
         var eventsRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getEvents), userInfo: nil, repeats: true)
         
+        // updates location every 20 seconds
         var locationRefreshTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(getLocation), userInfo: nil, repeats: true)
         
+        // updates notifications every 20 seconds using new event and location information
         var notificationTimer = Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(setUpNotifications), userInfo: nil, repeats: true)
+        
         setupConstraints()
+        
+        // Does not work, but this is an example of how weather would be fetched from backend.
+        // See NetworkManager for other functions that connect/attempt to connect to backend that are not currently being implemented.
+        NetworkManager.getWeather(token: UserDefaults.standard.string(forKey: "session_token")!) { weather in
+            print(weather)
+        }
     }
 
     
     func setupConstraints() {
         let collectionViewPadding: CGFloat = 12
         
-        
         NSLayoutConstraint.activate([
-            mainCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 416),
-            mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: collectionViewPadding),
-            mainCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -collectionViewPadding),
-            mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -collectionViewPadding)
-        ])
-        
-        NSLayoutConstraint.activate([
-            eventsLabel.topAnchor.constraint(equalTo: mainCollectionView.topAnchor, constant: -30),
-            eventsLabel.leadingAnchor.constraint(equalTo: mainCollectionView.leadingAnchor, constant: 12)
-        ])
-        
-        NSLayoutConstraint.activate([
-            welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
-            welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
-        NSLayoutConstraint.activate([
-            descriptionImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            descriptionImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 230)
-        ])
-        
-        NSLayoutConstraint.activate([
-            descriptionLabel.leadingAnchor.constraint(equalTo: descriptionImage.trailingAnchor, constant: 10),
-            descriptionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 235)
-        ])
+                 backImage.topAnchor.constraint(equalTo: view.topAnchor),
+                   backImage.widthAnchor.constraint(equalTo: view.widthAnchor),
+                   backImage.heightAnchor.constraint(equalTo: view.heightAnchor)
+                ])
+                
+                NSLayoutConstraint.activate([
+                    mainCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 416),
+                    mainCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: collectionViewPadding),
+                    mainCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -collectionViewPadding),
+                    mainCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -collectionViewPadding)
+                ])
+                
+                NSLayoutConstraint.activate([
+                    eventsLabel.topAnchor.constraint(equalTo: mainCollectionView.topAnchor, constant: -30),
+                    eventsLabel.leadingAnchor.constraint(equalTo: mainCollectionView.leadingAnchor, constant: 12)
+                ])
+                
+                NSLayoutConstraint.activate([
+                    welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
+                    welcomeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                    welcomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+                    welcomeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+                ])
+                NSLayoutConstraint.activate([
+                    descriptionImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                    descriptionImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 230)
+                ])
+                
+                NSLayoutConstraint.activate([
+                    descriptionLabel.leadingAnchor.constraint(equalTo: descriptionImage.trailingAnchor, constant: 10),
+                    descriptionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 235)
+                ])
 
-        NSLayoutConstraint.activate([
-            tempLabel.leadingAnchor.constraint(equalTo: descriptionImage.leadingAnchor),
-            tempLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20)
-        ])
+                NSLayoutConstraint.activate([
+                    tempLabel.leadingAnchor.constraint(equalTo: descriptionImage.leadingAnchor),
+                    tempLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20)
+                ])
     }
+    
+    // shows settings view when called by settings button on touch
     @objc func pushViewControllerButtonPressed() {
         let vc = SettingsViewController()
         
@@ -180,20 +191,21 @@ class ViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    // gets user's location, which would be used in requests to backend
     @objc func getLocation() {
-        // https://www.advancedswift.com/user-location-in-swift/
+        // Source: https://www.advancedswift.com/user-location-in-swift/
         locationManager.requestAlwaysAuthorization()
-        var currentLoc: CLLocation!
+        var currentLocation: CLLocation!
         if(CLLocationManager.locationServicesEnabled()) {
-           currentLoc = locationManager.location
-           print(currentLoc.coordinate.latitude)
-           print(currentLoc.coordinate.longitude)
+           currentLocation = locationManager.location
+//           print(currentLoc.coordinate.latitude)
+//           print(currentLoc.coordinate.longitude)
         }
     }
     
     let userNotificationCenter = UNUserNotificationCenter.current()
     
-    
+    //
     func getNoficationAccess() {
         userNotificationCenter.requestAuthorization(options: [.alert]) { (granted, error) in
             if(!granted) {
@@ -202,19 +214,17 @@ class ViewController: UIViewController {
         }
     }
     
+    // not being used but will properly display a notification if called
     func createTestNotification() {
         userNotificationCenter.delegate = self
         let content = UNMutableNotificationContent()
         content.title = "Test Notification"
         content.body = "testing"
         
-//        let date = Date(timeIntervalSinceNow: 10)
-        let date = Date(timeIntervalSince1970: TimeInterval(1638559400))
+
+        let date = Date(timeIntervalSince1970: TimeInterval(1638560000))
         let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         
-//        let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5,
-//                                                        repeats: false)
         let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
         
         let identifier = "UYLLocalNotification"
@@ -223,7 +233,6 @@ class ViewController: UIViewController {
         userNotificationCenter.add(request, withCompletionHandler: { (error) in
             if let error = error {
                 print(error)
-                // Something went wrong
             }
         })
         
@@ -235,18 +244,22 @@ class ViewController: UIViewController {
         })
     }
     
-    
+    // Sends
     @objc func setUpNotifications() {
         userNotificationCenter.removeAllPendingNotificationRequests()
         for timePair in times {
             if(timePair != []) {
                 var scheduledNotification = false
-//                print("new event")
                 var rangeOfTimes = (timePair[1] - timePair[0])/3600 + 2
+                
+                // - The following loop goes through each hour in range of times [1 hour before event, 1 hour after event].
+                // - For each time, checks if a notification has already been scheduled for the event
+                // and if not it will schedule a notification to be sent an hour before the event.
+                // - Would also check if weather was bad in order to decide whether or not to schedule
+                // a notification if backend was implemented.
                 for i in 0...rangeOfTimes {
                     var hour = timePair[0] - 3600 + i * 3600
-                    if(scheduledNotification == false /*and weather bad at hour*/) {
-                        //schedule notification
+                    if(scheduledNotification == false /* and weather bad at hour (if backend was implemented) */) {
                         scheduledNotification = true
                         userNotificationCenter.delegate = self
                         let content = UNMutableNotificationContent()
@@ -255,10 +268,7 @@ class ViewController: UIViewController {
                         
                         let date = Date(timeIntervalSince1970: TimeInterval(timePair[0]) - 3600)
                         let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
-                        
-                //        let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-                //        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5,
-                //                                                        repeats: false)
+                
                         let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
                         
                         let identifier = "UYLLocalNotification"
@@ -267,7 +277,6 @@ class ViewController: UIViewController {
                         userNotificationCenter.add(request, withCompletionHandler: { (error) in
                             if let error = error {
                                 print(error)
-                                // Something went wrong
                             }
                         })
                         
@@ -278,55 +287,39 @@ class ViewController: UIViewController {
                             }
                         })
                     }
-                    
                 }
-//                print(rangeOfTimes)
             }
         }
-    }
-    func requestNotification() {
-        
-    }
-    
-    func sendNotification() {
-        
     }
     
     let eventStore = EKEventStore()
 
     @objc func getEvents() {
-        // https://developer.apple.com/documentation/eventkit/retrieving_events_and_reminders
+        // Source: https://developer.apple.com/documentation/eventkit/retrieving_events_and_reminders
         eventStore.requestAccess(to: .event) { (granted, error) in
             if granted {
                 var calendar = Calendar.current
-////                var calendar = self.eventStore.defaultCalendarForNewEvents
-//
-//                // Create the start date components
-//                var rightNowComponents = DateComponents()
-//                rightNowComponents.day = 0
-//                var rightNow = calendar.date(byAdding: rightNowComponents, to: Date(), wrappingComponents: false)
-//
-//                // Create the end date components.
+
                 var oneDayFromNowComponents = DateComponents()
                 oneDayFromNowComponents.day = 1
                 var oneDayFromNow = calendar.date(byAdding: oneDayFromNowComponents, to: Date(), wrappingComponents: false)
                 
+                // time right now
                 var current: Date? = Date()
+                // today at midnight
                 var endOfDay: Date? = Calendar.current.startOfDay(for: oneDayFromNow!)
-//                print(current)
-//                print(end)
+                
                 var userCalendars = self.eventStore.calendars(for: .event)
                 
                 for calendar in userCalendars {
-                    // https://stackoverflow.com/questions/51439574/swift-4-how-to-get-all-events-from-calendar
-                    // This checking will remove Birthdays and Hollidays callendars
+                    // Source: https://stackoverflow.com/questions/51439574/swift-4-how-to-get-all-events-from-calendar
+                    // Removes birthday and holiday calendars
                     if(calendar.allowsContentModifications) {
                         var predicate: NSPredicate? = nil
                         if let anAgo = current, let aNow = endOfDay {
                             predicate = self.eventStore.predicateForEvents(withStart: anAgo, end: aNow, calendars: nil)
                         }
 
-                        // Fetch all events that match the predicate.
                         var allEvents: [EKEvent]? = nil
                         if let aPredicate = predicate {
                             allEvents = self.eventStore.events(matching: aPredicate)
@@ -365,21 +358,15 @@ class ViewController: UIViewController {
                                 self.times.append([unixStart,unixEnd])
                             }
                             
+                            // updates collection view with new events
                             DispatchQueue.main.async {
                                 self.mainCollectionView.reloadData()
                             }
                         }
                     }
-                    
-                    // Create the predicate from the event store's instance method.
                 }
             }
-//            print(self.events)
-//            print(self.times)
-//            self.setUpNotifications()
         }
-
-
     }
 }
 
@@ -421,13 +408,13 @@ extension ViewController: CLLocationManagerDelegate {
     }
 }
 
+// allows notifications to be shown while app is in foreground
 extension ViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-    //https://stackoverflow.com/questions/42127403/how-do-i-handle-ios-push-notifications-when-the-app-is-in-the-foreground
+    // Source: https://stackoverflow.com/questions/42127403/how-do-i-handle-ios-push-notifications-when-the-app-is-in-the-foreground
             if UIApplication.shared.applicationState == .active {
-                completionHandler( [.alert,.sound]) // completionHandler will show alert and sound from foreground app, just like a push that is shown from background app
+                completionHandler( [.alert,.sound])
             }
         }
 }
-    
 

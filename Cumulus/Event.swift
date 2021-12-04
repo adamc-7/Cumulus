@@ -7,6 +7,7 @@
 
 import Foundation
 
+// class for an event from the user's calendar
 class Event {
     var time: String
     var title: String

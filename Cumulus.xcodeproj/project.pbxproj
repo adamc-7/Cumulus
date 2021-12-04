@@ -24,7 +24,6 @@
 		EDB2695927483927009070F4 /* CumulusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2695827483927009070F4 /* CumulusTests.swift */; };
 		EDB2696327483927009070F4 /* CumulusUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2696227483927009070F4 /* CumulusUITests.swift */; };
 		EDB2696527483927009070F4 /* CumulusUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2696427483927009070F4 /* CumulusUITestsLaunchTests.swift */; };
-		EDE4E38627580EF60010BF03 /* Calendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE4E38527580EF60010BF03 /* Calendar.swift */; };
 		F4918CAE274B2DE700F0D8C5 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4918CAD274B2DE700F0D8C5 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -73,7 +72,6 @@
 		EDB2695E27483927009070F4 /* CumulusUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CumulusUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDB2696227483927009070F4 /* CumulusUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CumulusUITests.swift; sourceTree = "<group>"; };
 		EDB2696427483927009070F4 /* CumulusUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CumulusUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		EDE4E38527580EF60010BF03 /* Calendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calendar.swift; sourceTree = "<group>"; };
 		F4918CAD274B2DE700F0D8C5 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -162,7 +160,6 @@
 				EDB2694F27483926009070F4 /* Info.plist */,
 				EDA88F40274B1E5200D84AB7 /* CollectionViewCell.swift */,
 				EDA88F42274B221F00D84AB7 /* Event.swift */,
-				EDE4E38527580EF60010BF03 /* Calendar.swift */,
 				ED81EDAD27595DE8000CC89B /* NetworkManager.swift */,
 				ED81EDAF2759615C000CC89B /* User.swift */,
 				ED81EDB3275AB1BE000CC89B /* SignUpViewController.swift */,
@@ -436,7 +433,6 @@
 				ED81EDB02759615C000CC89B /* User.swift in Sources */,
 				EDA88F43274B221F00D84AB7 /* Event.swift in Sources */,
 				F4918CAE274B2DE700F0D8C5 /* SettingsViewController.swift in Sources */,
-				EDE4E38627580EF60010BF03 /* Calendar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
