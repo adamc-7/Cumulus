@@ -63,7 +63,7 @@ class Users(db.Model):
             "id": self.id,
             "username": self.username,
             "lat":loc.lat,
-            "long":loc.long
+            "lon":loc.lon
                     }
     
     def serialize(self):
@@ -72,7 +72,7 @@ class Users(db.Model):
             "id": self.id,
             "username": self.username,
             "lat":loc.lat,
-            "long":loc.long,
+            "lon":loc.lon,
             "times": [t.subserialize() for t in self.times]
         }
 
@@ -103,13 +103,13 @@ class Times(db.Model):
 class Locations(db.Model):
     __tablename__ = "locations"
     id = db.Column(db.Integer, primary_key=True)
-    long = db.Column(db.String, nullable=False)
+    lon = db.Column(db.String, nullable=False)
     lat = db.Column(db.String, nullable=False)
     country_code = db.Column(db.String, nullable=False)
     users = db.relationship("Users")
 
     def __init__(self, **kwargs):
-        self.long=kwargs.get("long")
+        self.lon=kwargs.get("lon")
         self.lat=kwargs.get("lat")
         self.country_code=kwargs.get("country_code")
 
@@ -117,7 +117,7 @@ class Locations(db.Model):
     def subserialize(self):
         return{
             "id": self.id,
-            "long": self.long,
+            "lon": self.lon,
             "lat": self.lat,
             "country_code": self.country_code
         }
@@ -125,7 +125,7 @@ class Locations(db.Model):
     def serialize(self):
         return{
             "id": self.id,
-            "long": self.long,
+            "lon": self.lon,
             "lat": self.lat,
             "country_code": self.country_code,
             "users": [t.subsubserialize() for t in self.users]
