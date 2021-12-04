@@ -58,7 +58,7 @@ def get_daily_weather():
     user = Users.query.filter_by(session_token=session_token).first()
     location = Locations.query.filter_by(id=user.location_id).first()
 
-    lon = location.long
+    lon = location.lon
     lat = location.lat
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,hourly,alerts&appid={api_key}"
@@ -110,7 +110,7 @@ def get_hourly_weather():
     user = Users.query.filter_by(session_token=session_token).first()
     location = Locations.query.filter_by(id=user.location_id).first()
 
-    lon = location.long
+    lon = location.lon
     lat = location.lat
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
@@ -179,7 +179,7 @@ def get_current_hour_weather():
     user = Users.query.filter_by(session_token=session_token).first()
     location = Locations.query.filter_by(id=user.location_id).first()
 
-    lon = location.long
+    lon = location.lon
     lat = location.lat
 
     url1 = f"http://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=current,minutely,daily,alerts&appid={api_key}"
@@ -232,21 +232,21 @@ def create_user():
     username=body.get("username")
     password=body.get("password")
     lat=body.get("lat")
-    long=body.get("long")
+    lon=body.get("lon")
     country_code = body.get("country_code", "US")
     if not username:
         return failure_response("Username is required", 400)
     if not password:
         return failure_response("Password is required", 400)
-    if not lat or not long:
+    if not lat or not lon:
         return failure_response("Location is required", 400)
-    if Locations.query.filter_by(lat=lat, long=long).first() is None:
-        new_location=Locations(long=long, lat=lat, country_code=country_code)
+    if Locations.query.filter_by(lat=lat, lon=lon).first() is None:
+        new_location=Locations(lon=lon, lat=lat, country_code=country_code)
         db.session.add(new_location)
         db.session.commit()
     if Users.query.filter_by(username=username).first() is not None:
         return failure_response("user already exists")
-    location_id=Locations.query.filter_by(lat=lat, long=long).first().id
+    location_id=Locations.query.filter_by(lat=lat, lon=lon).first().id
     new_user = Users(username=username, password=password, location_id=location_id)
     db.session.add(new_user)
     db.session.commit()
@@ -340,13 +340,13 @@ def change_location():
     if user is None:
         return failure_response("user does not exist")
     body = json.loads(request.data)
-    long = str(body.get("long"))
+    lon = str(body.get("lon"))
     lat = str(body.get("lat"))
     country_code = str(body.get("country_code", "US"))
-    if Locations.query.filter_by(long=long, lat=lat).first() is None:
-        new_location=Locations(long=long, lat=lat, country_code=country_code)
+    if Locations.query.filter_by(lon=lon, lat=lat).first() is None:
+        new_location=Locations(lon=lon, lat=lat, country_code=country_code)
         db.session.add(new_location)
-    location_id = Locations.query.filter_by(long=long, lat=lat).first().id
+    location_id = Locations.query.filter_by(lon=lon, lat=lat).first().id
     user.location_id=location_id
     db.session.commit()
     return success_response(user.serialize())
