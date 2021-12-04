@@ -1,6 +1,6 @@
 # Cumulus
 
-Detailed comments in frontend project files, I would recommend starting at ViewController.swift to understand them best.
+There are detailed comments in the frontend project files, I would recommend starting at ViewController.swift to understand them best.
 
 Notes:
 1. There is a bug where the settings button will not be displayed on initial login to app,
